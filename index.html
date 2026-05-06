@@ -1762,7 +1762,7 @@ function InboxModal({inbox,sent,onClose}){
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5 space-y-3" style={{background:"rgba(255,255,255,0.6)"}}>
+        <div className="p-5 space-y-3 flex-1 overflow-y-auto min-h-0" style={{background:"rgba(255,255,255,0.6)"}}>
           {list.length===0?(
             <div className="py-14 text-center">
               <div className="text-5xl mb-3 bounceY">{tab==="inbox"?"📭":"✉️"}</div>
