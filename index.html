@@ -649,8 +649,21 @@ const rewardInfo = t=>{
 const isPreview=()=>{try{return window.self!==window.top;}catch(e){return true;}};
 
 let _pf=null;
+const STAFF_SET = new Set(STAFF);
 const getPrefetch=()=>{
-  if(!_pf)_pf=apiCall({action:"getAllStatuses"}).then(r=>(r.ok&&r.statuses)?r.statuses:{}).catch(()=>({}));
+  if(!_pf)_pf=apiCall({action:"getAllStatuses"}).then(r=>{
+    if(r.ok && r.statuses){
+      // ⭐ 백엔드 명단에 있는데 프론트 STAFF에 없는 직원 자동 추가
+      Object.keys(r.statuses).forEach(full=>{
+        if(!STAFF_SET.has(full)){
+          STAFF.push(full);
+          STAFF_SET.add(full);
+        }
+      });
+      return r.statuses;
+    }
+    return {};
+  }).catch(()=>({}));
   return _pf;
 };
 
@@ -1008,12 +1021,13 @@ function LoginScreen({onLogin}){
   const [loading,setLoading]=useState(false);
   const [open,setOpen]=useState(false);
 
-  useEffect(()=>{getPrefetch();},[]);
+  const [_v,setV]=useState(0);
+useEffect(()=>{getPrefetch().then(()=>setV(v=>v+1));},[]);
 
-  const filtered=useMemo(()=>{
-    const q=search.trim();
-    return q?STAFF.filter(s=>matchStaff(s,q)):STAFF;
-  },[search]);
+ const filtered=useMemo(()=>{
+  const q=search.trim();
+  return q?STAFF.filter(s=>matchStaff(s,q)):STAFF;
+},[search,_v]);
   const grouped=useMemo(()=>groupByDept(filtered),[filtered]);
 
   const handleSelect=async(name)=>{
