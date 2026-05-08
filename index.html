@@ -1442,7 +1442,7 @@ function Dashboard({me,pw,onLogout,isAdmin,onOpenAdmin,initialData}){
 
           {/* ⭐ 핵심 규칙 안내 (변경 없음) */}
           <div className="rule-card slideUp" style={{animationDelay:"0.22s"}}>
-            <div className="rule-line"><span className="ico">💌</span><span>쪽지는 매일 무제한으로 보낼 수 있어요</span></div>
+            <div className="rule-line"><span className="ico">💌</span><span>쪽지는 매일 무제한으로 보낼 수 있으며 나와 상대 모두 1°C씩 상승합니다. 1</span></div>
             <div className="rule-line"><span className="ico">🌡️</span><span>온도는 하루 최대 3°C까지 올라가요 (매일 00:00 리셋)</span></div>
             <div className="rule-line"><span className="ico">💚</span><span>같은 분께 중복으로 보내도 서로 하루에 1°C만 올라요 (매일 00:00 리셋)</span></div>
           </div>
@@ -1721,7 +1721,7 @@ function SuccessModal({oldTemp,newTemp,rose,reason,milestone}){
             <p className="text-[12px] font-medium text-amber-700 mt-2 leading-relaxed">
               따뜻한 밀알인을 응원하기 위해<br/>
               디아코니아 연구소에서 준비한 {giftWord}이<br/>
-              지급될 예정입니다 (1주 내 지급) {milestoneIcon}
+              지급될 예정입니다 (차주 내) {milestoneIcon}
             </p>
           </div>
         )}
@@ -2467,7 +2467,7 @@ function AdminOpsTab({me,onAction}){
           <li>💌 쪽지는 <b className="text-emerald-700">매일 무제한</b> 발송 가능</li>
           <li>🌡️ 본인 온도: 하루 최대 <b className="text-emerald-700">+3°C</b></li>
           <li>💚 같은 분께 중복 발송: 둘 사이 <b className="text-emerald-700">+1°C</b>만</li>
-          <li>🎁 보상: 60/80°C ☕, 100°C 🎁 (1주 내, 디아코니아 연구소)</li>
+          <li>🎁 보상: 60/80°C ☕, 100°C 🎁 (차주 내, 디아코니아 연구소)</li>
         </ul>
       </div>
     </div>
