@@ -1502,13 +1502,17 @@ function Dashboard({me,pw,onLogout,isAdmin,onOpenAdmin,initialData}){
             <div className="w-12 h-12 rounded-full flex items-center justify-center font-extrabold text-lg flex-shrink-0"
                  style={{background:"linear-gradient(135deg,#ECFDF5,#D1FAE5)",color:"#047857"}}>{pm.name.charAt(0)}</div>
             <div className="min-w-0 flex-1">
-              <p className="font-extrabold text-slate-900 text-sm track-tight leading-snug flex items-center gap-1 flex-wrap">
-                <span style={{background:"linear-gradient(135deg,#059669,#10B981)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{pm.name}</span>
-                <span>{pm.role}님, 안녕하세요</span>
-                {temp>=60 && <Medal level={temp>=100?100:temp>=80?80:60} size={20}/>}
+              <p className="font-extrabold text-slate-900 text-sm track-tight leading-snug">
+                <span style={{background:"linear-gradient(135deg,#059669,#10B981)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{pm.name}</span> {pm.role}님, 안녕하세요
               </p>
               <p className="text-xs text-slate-400 mt-1 font-medium">{pm.dept} · 오늘도 따뜻한 하루 되세요 💚</p>
             </div>
+            {temp>=60 && (
+              <div className="flex-shrink-0 flex flex-col items-center justify-center" style={{animation:"badgeIn .5s cubic-bezier(.34,1.56,.64,1) .3s both"}}>
+                <Medal level={temp>=100?100:temp>=80?80:60} size={52}/>
+                <span className="text-[10px] font-extrabold mt-0.5 tabular" style={{color:temp>=100?"#D4920A":temp>=80?"#8A8F94":"#9C5A22"}}>{temp>=100?100:temp>=80?80:60}°C</span>
+              </div>
+            )}
           </div>
 
           <div className="card-hero p-7 mb-3 slideUp" style={{animationDelay:"0.11s"}}>
