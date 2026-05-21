@@ -691,9 +691,24 @@ const isPreview=()=>{try{return window.self!==window.top;}catch(e){return true;}
 
 let _pf=null;
 const getPrefetch=()=>{
-  if(!_pf)_pf=apiCall({action:"getAllStatuses"}).then(r=>(r.ok&&r.statuses)?r.statuses:{}).catch(()=>({}));
+  if(!_pf)_pf=apiCall({action:"getAllStatuses"}).then(r=>{
+    const st=(r.ok&&r.statuses)?r.statuses:{};
+    setDynamicStaff(st);
+    return st;
+  }).catch(()=>({}));
   return _pf;
 };
+
+// ⭐ 동적 직원 명단 — 백엔드(시트)에서 받은 명단 우선, 없으면 코드 STAFF fallback
+// 관리자 모드에서 직원 추가 시 시트에 반영되고, 다음 prefetch에서 자동으로 명단에 포함됨
+let _dynamicStaff = null;
+const setDynamicStaff = (statuses)=>{
+  if(statuses && typeof statuses==="object"){
+    const keys = Object.keys(statuses);
+    if(keys.length>0) _dynamicStaff = keys;
+  }
+};
+const getStaffList = ()=> _dynamicStaff || STAFF;
 
 async function apiCall(p){
   if(!SHEET_URL||SHEET_URL.startsWith("PASTE_")||isPreview())return demo(p);
@@ -715,9 +730,10 @@ function demo(p){
   if(!s.u)s.u={};if(!s.m)s.m=[];if(!s.t)s.t={};if(!s.notice)s.notice={active:false,content:""};
   if(!s.en)s.en={}; // emailNotify per user
   if(!s.gifts)s.gifts={};
+  if(!s.added)s.added=[]; // ⭐ 데모에서 관리자 추가한 직원 명단
   const save=()=>localStorage.setItem("gu",JSON.stringify(s));
   const kst=()=>{const n=new Date();return new Date(n.getTime()+9*3600000-n.getTimezoneOffset()*60000).toISOString().slice(0,10);};
-  if(p.action==="getAllStatuses"){const st={};STAFF.forEach(n=>{st[n]=!!(s.u[n]?.pw);});return{ok:true,statuses:st};}
+  if(p.action==="getAllStatuses"){const st={};STAFF.concat(s.added||[]).forEach(n=>{st[n]=!!(s.u[n]?.pw);});return{ok:true,statuses:st};}
   if(p.action==="checkUser")return{ok:true,isNew:!s.u[p.name]?.pw};
   if(p.action==="setPassword"){s.u[p.name]={pw:p.password};save();return{ok:true};}
   if(p.action==="login"){if(!s.u[p.name]?.pw||s.u[p.name].pw!==p.password)return{ok:false,error:"비밀번호가 맞지 않아요"};return{ok:true,isAdmin:s.u[p.name].admin||false};}
@@ -795,7 +811,7 @@ function demo(p){
   if(p.action==="adminCheckAccess") return {ok:!!s.u[p.name]?.admin,isAdmin:!!s.u[p.name]?.admin};
   if(p.action==="adminGetStats") return {ok:true,totalAll:s.m.length,totalActive:STAFF.length,activeUsers:Object.keys(s.t).length,tempBuckets:{c0:STAFF.length-Object.keys(s.t).length,c60:0,c80:0,c100:0},topSenders:[],topReceivers:[],daily:[],monthly:[]};
   if(p.action==="adminGetAllStaff"){
-    return{ok:true,staff:STAFF.filter(f=>f!==p.name).map(f=>{const ps=parseS(f);return{full:f,name:ps.name,dept:ps.dept,role:ps.role,email:"",hasPassword:!!s.u[f]?.pw,isAdmin:false,active:true,emailNotify:s.en[f]!==false,temp:s.t[f]||36.5};})};
+    return{ok:true,staff:STAFF.concat(s.added||[]).filter(f=>f!==p.name).map(f=>{const ps=parseS(f);return{full:f,name:ps.name,dept:ps.dept,role:ps.role,email:"",hasPassword:!!s.u[f]?.pw,isAdmin:false,active:true,emailNotify:s.en[f]!==false,temp:s.t[f]||36.5};})};
   }
   if(p.action==="adminGetGifts"){
     const list=[];
@@ -839,7 +855,14 @@ function demo(p){
   if(p.action==="adminResetPassword"){if(s.u[p.target])delete s.u[p.target].pw;save();return{ok:true};}
   if(p.action==="adminResetTemp"){if(p.target==="_all_"){s.t={};}else{s.t[p.target]=36.5;}save();return{ok:true};}
   if(p.action==="adminUpdateNotice"){s.notice={active:!!p.active,content:p.content||""};save();return{ok:true};}
-  if(p.action==="adminAddStaff"||p.action==="adminUpdateStaff"||p.action==="adminDeactivateStaff") return {ok:true};
+  if(p.action==="adminAddStaff"){
+    const full=`${p.dept}-${p.newName}-${p.role}`;
+    if(STAFF.includes(full)||(s.added||[]).includes(full)) return {ok:false,error:"이미 존재하는 직원이에요"};
+    s.added.push(full);
+    save();
+    return {ok:true,full};
+  }
+  if(p.action==="adminUpdateStaff"||p.action==="adminDeactivateStaff") return {ok:true};
   return{ok:false,error:"알 수 없는 요청"};
 }
 
@@ -1153,12 +1176,15 @@ function LoginScreen({onLogin}){
   const [loading,setLoading]=useState(false);
   const [open,setOpen]=useState(false);
 
-  useEffect(()=>{getPrefetch();},[]);
+  const [staffReady,setStaffReady]=useState(false);
+  useEffect(()=>{getPrefetch().then(()=>setStaffReady(true));},[]);
 
   const filtered=useMemo(()=>{
+    const list=getStaffList();
     const q=search.trim();
-    return q?STAFF.filter(s=>matchStaff(s,q)):STAFF;
-  },[search]);
+    return q?list.filter(s=>matchStaff(s,q)):list;
+  // eslint-disable-next-line
+  },[search,staffReady]);
   const grouped=useMemo(()=>groupByDept(filtered),[filtered]);
 
   const handleSelect=async(name)=>{
@@ -1347,6 +1373,9 @@ function Dashboard({me,pw,onLogout,isAdmin,onOpenAdmin,initialData}){
   const knownTsRef = useRef(new Set());
   const initialLoadRef = useRef(true);
   const handleOpenInboxRef = useRef(null);
+
+  // ⭐ 직원 명단 prefetch 보장 (새로고침으로 로그인 화면 안 거쳐도 최신 명단 확보)
+  useEffect(()=>{ getPrefetch(); },[]);
 
   useEffect(()=>{
     if(initialData){
@@ -1621,7 +1650,7 @@ function ComposeModal({me,currentTemp,onClose,onSent}){
   useEffect(()=>{document.body.classList.add("modal-open");return()=>document.body.classList.remove("modal-open");},[]);
 
   const toggle=id=>setSel(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id]);
-  const receivers=useMemo(()=>STAFF.filter(s=>s!==me),[me]);
+  const receivers=useMemo(()=>getStaffList().filter(s=>s!==me),[me]);
   const filtered=useMemo(()=>{
     const q=rSearch.trim();
     return q?receivers.filter(s=>matchStaff(s,q)):receivers;
@@ -2144,6 +2173,12 @@ function AdminStatsTab({stats}){
 function AdminStaffTab({me,staff,onRefresh}){
   const [search,setSearch]=useState("");
   const [busy,setBusy]=useState("");
+  const [showAdd,setShowAdd]=useState(false);
+  const [addDept,setAddDept]=useState("");
+  const [addName,setAddName]=useState("");
+  const [addRole,setAddRole]=useState("");
+  const [addEmail,setAddEmail]=useState("");
+  const [adding,setAdding]=useState(false);
 
   const filtered = useMemo(()=>{
     const q = search.trim();
@@ -2178,8 +2213,49 @@ function AdminStaffTab({me,staff,onRefresh}){
     else alert(r.error||"실패");
   };
 
+  const addStaff = async()=>{
+    const dept=addDept.trim(), newName=addName.trim(), role=addRole.trim(), email=addEmail.trim();
+    if(!dept || !newName || !role){ alert("부서·이름·직급은 꼭 입력해주세요\n(이메일은 비워둬도 돼요)"); return; }
+    if(dept.includes("-")||newName.includes("-")||role.includes("-")){
+      alert("부서·이름·직급에 '-'(하이픈)는 쓸 수 없어요.");
+      return;
+    }
+    setAdding(true);
+    const r = await apiCall({action:"adminAddStaff",name:me,dept,newName,role,email});
+    setAdding(false);
+    if(r.ok){
+      // ⭐ 새 직원을 로그인/쪽지 명단(동적)에 즉시 반영
+      const full = `${dept}-${newName}-${role}`;
+      if(_dynamicStaff && !_dynamicStaff.includes(full)) _dynamicStaff.push(full);
+      _pf = null; // 다음 prefetch에서 시트 기준으로 다시 받아오도록 캐시 무효화
+      alert(`✅ 추가 완료\n${dept} ${newName} ${role}\n\n이제 로그인 화면과 쪽지 받는 사람 목록에도 바로 나타나요.`);
+      setAddDept("");setAddName("");setAddRole("");setAddEmail("");setShowAdd(false);
+      onRefresh();
+    } else alert(r.error||"추가 실패");
+  };
+
   return(
     <div className="space-y-3">
+      <button onClick={()=>setShowAdd(s=>!s)} className="adm-btn adm-btn-g w-full justify-center py-2.5">
+        {showAdd ? "✕ 추가 취소" : "➕ 직원 추가"}
+      </button>
+
+      {showAdd && (
+        <div className="admin-card space-y-2 popIn" style={{border:"1px solid rgba(16,185,129,0.3)"}}>
+          <div className="text-xs font-extrabold text-emerald-700 track-tight mb-1">새 직원 추가</div>
+          <input type="text" value={addDept} onChange={e=>setAddDept(e.target.value)} placeholder="부서 (예: 인재경영실)" className="adm-input"/>
+          <input type="text" value={addName} onChange={e=>setAddName(e.target.value)} placeholder="이름 (예: 홍길동)" className="adm-input"/>
+          <input type="text" value={addRole} onChange={e=>setAddRole(e.target.value)} placeholder="직급 (예: 간사)" className="adm-input"/>
+          <input type="text" value={addEmail} onChange={e=>setAddEmail(e.target.value)} placeholder="이메일 (모르면 비워두세요)" className="adm-input"/>
+          <button onClick={addStaff} disabled={adding} className="adm-btn adm-btn-g w-full justify-center py-2.5">
+            {adding ? "추가 중..." : "추가하기"}
+          </button>
+          <p className="text-[10.5px] text-slate-500 leading-relaxed font-medium pt-1" style={{borderTop:"1px solid var(--line-soft)"}}>
+            💡 추가하면 명단·온도·선물 시트에 자동 반영되고, 로그인 화면에도 바로 나타나요. 이메일은 비워둬도 정상 작동해요(메일 알림만 안 감).
+          </p>
+        </div>
+      )}
+
       <input type="text" value={search} onChange={e=>setSearch(e.target.value)}
         placeholder="이름·부서·초성 검색"
         className="adm-input"/>
