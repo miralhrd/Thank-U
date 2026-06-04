@@ -1196,19 +1196,21 @@ function LoginScreen({onLogin}){
   },[search,staffReady]);
   const grouped=useMemo(()=>groupByDept(filtered),[filtered]);
 
-  const handleSelect=async(name)=>{
+const handleSelect=async(name)=>{
     if(loading)return;
     setSel(name);setOpen(false);setSearch(parseS(name).name);setErr("");
-    const map=await getPrefetch();
-    if(name in map){setStep(map[name]?"pw-exist":"pw-new");}
-    else{
-      setLoading(true);
-      const r=await apiCall({action:"checkUser",name});
-      setLoading(false);
-      if(!r.ok){setErr(r.error||"오류가 발생했어요");return;}
-      setStep(r.isNew?"pw-new":"pw-exist");
-    }
     setPw("");setPw2("");
+    setStep("pw-exist");   // ★ 비밀번호 칸을 즉시 표시 (서버 응답을 안 기다림)
+    // 신규/기존 여부는 백그라운드에서 확인해 보정
+    try{
+      const map=await getPrefetch();
+      if(name in map){
+        setStep(map[name]?"pw-exist":"pw-new");
+      }else{
+        const r=await apiCall({action:"checkUser",name});
+        if(r && r.ok) setStep(r.isNew?"pw-new":"pw-exist");
+      }
+    }catch(e){}
   };
 
   const doSetPw=async()=>{
