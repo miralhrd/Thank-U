@@ -715,7 +715,16 @@ async function apiCall(p){
   try{
     const r=await fetch(SHEET_URL,{method:"POST",mode:"cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)});
     return await r.json();
-  }catch(e){console.warn("API→demo:",e.message);return demo(p);}
+  }catch(e){
+    // 첫 시도 실패 → 콜드 스타트 대비 한 번만 다시 시도
+    try{
+      const r2=await fetch(SHEET_URL,{method:"POST",mode:"cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)});
+      return await r2.json();
+    }catch(e2){
+      console.warn("API 실패:",e2.message);
+      return { ok:false, error:"연결이 불안정해요. 잠시 후 다시 시도해주세요." };
+    }
+  }
 }
 
 function apiCallFireForget(p){
