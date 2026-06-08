@@ -772,19 +772,23 @@ function demo(p){
       if(m.from===p.from) todaySentTo.add(m.to);
       if(m.to===p.to) todayRecvFrom.add(m.from);
     });
-    const alreadySent = todaySentTo.has(p.to);
+const alreadySent = todaySentTo.has(p.to);
     const fromCapped = todaySentTo.size >= 3;
     const alreadyRecv = todayRecvFrom.has(p.from);
     const toCapped = todayRecvFrom.size >= 3;
-    const fromShouldRise = !alreadySent && !fromCapped;
-    const toShouldRise = !alreadyRecv && !toCapped;
+    const oldTemp = s.t[p.from]||36.5;
+    const oldTempTo = s.t[p.to]||36.5;
+    const fromMaxed = oldTemp >= 100;
+    const toMaxed = oldTempTo >= 100;
+    const fromShouldRise = !alreadySent && !fromCapped && !fromMaxed;
+    const toShouldRise = !alreadyRecv && !toCapped && !toMaxed;
     let reason = "rose";
-    if(alreadySent) reason = "duplicate_recipient";
+    if(fromMaxed) reason = "temp_maxed";
+    else if(alreadySent) reason = "duplicate_recipient";
     else if(fromCapped) reason = "daily_cap_reached";
     s.m.push({from:p.from,to:p.to,templates:p.templates,message:p.message,ts:Date.now(),read:false});
-    const oldTemp = s.t[p.from]||36.5;
-    if(fromShouldRise) s.t[p.from] = oldTemp+1;
-    if(toShouldRise) s.t[p.to] = (s.t[p.to]||36.5)+1;
+    if(fromShouldRise) s.t[p.from] = Math.min(100, oldTemp+1);
+    if(toShouldRise) s.t[p.to] = Math.min(100, oldTempTo+1);
     if(!s.t[p.from]) s.t[p.from]=36.5;
     let milestone = 0;
     if(fromShouldRise){
@@ -1848,9 +1852,17 @@ function SuccessModal({oldTemp,newTemp,rose,reason,milestone}){
         <div className="inline-flex items-center gap-1.5 text-white text-xs font-extrabold px-3.5 py-1.5 rounded-full track-tight"
              style={{background:"linear-gradient(135deg,#047857,#10B981)",boxShadow:"0 3px 10px rgba(16,185,129,0.3)",animation:"badgeIn .5s cubic-bezier(.34,1.56,.64,1) .9s both"}}>
           <span style={{animation:"arrowUp 1.2s ease-in-out infinite"}}>▲</span>
-          <span className="tabular">+1.0°C 따뜻해졌어요</span>
+        <span className="tabular">+{(newTemp-oldTemp).toFixed(1)}°C 따뜻해졌어요</span>
         </div>
       </>
+    );
+}else if(reason==="temp_maxed"){
+    caseUI = (
+      <div className="px-2">
+        <div className="text-3xl mb-2">🏆</div>
+        <p className="text-base font-extrabold text-slate-800 track-tight leading-snug mb-1">이미 최고 온도 100°C예요!</p>
+        <p className="text-sm font-semibold text-slate-600 leading-relaxed track-tight">마음의 온도가 가득 찼어요 💚</p>
+      </div>
     );
   }else if(reason==="duplicate_recipient"){
     caseUI = (
@@ -1890,8 +1902,10 @@ function SuccessModal({oldTemp,newTemp,rose,reason,milestone}){
           {caseUI}
         </div>
         <div style={{animation: rose ? "msgIn .5s ease-out 1.1s both" : "msgIn .4s ease-out both"}}>
-          {rose ? (
+  {rose ? (
             <p className="text-sm font-semibold text-slate-600 leading-relaxed track-tight">당신의 소중한 감사 덕에<br/>상대의 마음의 온도도 1도 올라갔습니다 💚</p>
+          ) : reason==="temp_maxed" ? (
+            <p className="text-sm font-semibold text-slate-600 leading-relaxed track-tight">온도는 더 오르지 않지만<br/>당신의 따뜻한 마음은 변함없이 전달되었어요 💚</p>
           ) : reason==="duplicate_recipient" ? (
             <p className="text-sm font-semibold text-slate-600 leading-relaxed track-tight">하지만 당신의 따뜻한 마음은<br/>한 번 더 전달되었어요 🌱</p>
           ) : (
