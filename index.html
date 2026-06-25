@@ -1032,7 +1032,7 @@ async function exportNotesToPDF({me,list,tab,temp}){
 
 function printNotesFallback({me,list,tab,temp}){
   const inner = buildNotesHTML({me,list,tab,temp});
-  const docTitle = `감사해U_${tab==="inbox"?"받은":"보낸"}쪽지`;
+  const docTitle = `감사해U_${parseS(me).name}_${tab==="inbox"?"받은":"보낸"}쪽지`;
   const w = window.open("","_blank");
   if(!w) return false;
   w.document.write(
