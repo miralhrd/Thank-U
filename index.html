@@ -2076,7 +2076,7 @@ function InboxModal({me,temp,inbox,sent,onClose}){
     if(written.length===0) return;
     setPdfBusy(true);
     try{
-      await exportNotesToPDF({me, list:written, tab, temp});
+      printNotesFallback({me, list:written, tab, temp});
     }catch(e){
       const ok = printNotesFallback({me, list:written, tab, temp});
       if(!ok){
