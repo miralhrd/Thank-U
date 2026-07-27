@@ -4686,7 +4686,7 @@ function AdminMode({
       content: n.content
     });
     setLoading(false);
-  }, [me]);
+  }, [me, pw]);
   useEffect(() => {
     loadAll();
   }, [loadAll]);
@@ -4753,18 +4753,22 @@ function AdminMode({
     stats: stats
   }), tab === "staff" && /*#__PURE__*/React.createElement(AdminStaffTab, {
     me: me,
+    pw: pw,
     staff: staff,
     onRefresh: loadAll
   }), tab === "gifts" && /*#__PURE__*/React.createElement(AdminGiftsTab, {
     me: me,
+    pw: pw,
     data: gifts,
     onRefresh: loadAll
   }), tab === "notice" && /*#__PURE__*/React.createElement(AdminNoticeTab, {
     me: me,
+    pw: pw,
     notice: notice,
     onSaved: loadAll
   }), tab === "ops" && /*#__PURE__*/React.createElement(AdminOpsTab, {
     me: me,
+    pw: pw,
     onAction: loadAll
   })))));
 }
@@ -4932,6 +4936,7 @@ function AdminStatsTab({
 }
 function AdminStaffTab({
   me,
+  pw,
   staff,
   onRefresh
 }) {
@@ -5166,6 +5171,7 @@ function AdminStaffTab({
 // ⭐ NEW: 선물 지급 관리 탭 (B+C+A안)
 function AdminGiftsTab({
   me,
+  pw,
   data,
   onRefresh
 }) {
@@ -5427,6 +5433,7 @@ function AdminGiftsTab({
 }
 function AdminNoticeTab({
   me,
+  pw,
   notice,
   onSaved
 }) {
@@ -5493,6 +5500,7 @@ function AdminNoticeTab({
 }
 function AdminOpsTab({
   me,
+  pw,
   onAction
 }) {
   const [busy, setBusy] = useState(false);
