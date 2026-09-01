@@ -13,18 +13,17 @@
 <script src="https://cdn.tailwindcss.com" defer></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" defer></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" defer></script>
-<link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3d6.svg">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg-base:#F9FAFB; --bg-tint:#F4FBF7;
+  --bg-base:#F9FAFB; --bg-tint:#FAF6F0;
   --ink-900:#0F172A; --ink-700:#334155; --ink-500:#64748B;
   --ink-400:#94A3B8; --ink-300:#CBD5E1; --ink-200:#E2E8F0;
   --line:rgba(15,23,42,0.06); --line-soft:rgba(15,23,42,0.04);
-  --em-50:#EAF7F6; --em-100:#DAEFF0; --em-200:#B7E4E8;
-  --em-300:#8AD7E0; --em-400:#58C6D4; --em-500:#2BA8BC;
-  --em-600:#1791A2; --em-700:#0E6B79; --em-800:#0E5B66; --em-900:#0C4A52;
+  --em-50:#FAF3E8; --em-100:#F4E6D3; --em-200:#EBD5B7;
+  --em-300:#E7C6A8; --em-400:#D89A73; --em-500:#B1603E;
+  --em-600:#96552F; --em-700:#5C4033; --em-800:#4E382B; --em-900:#3B2A20;
   --spring:cubic-bezier(0.34,1.56,0.64,1);
   --ease-out:cubic-bezier(0.22,0.61,0.36,1);
 }
@@ -34,8 +33,8 @@ body{
   font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   letter-spacing:-0.02em; word-break:keep-all; overflow-wrap:break-word;
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(43,168,188,0.06), transparent 60%),
-    radial-gradient(1000px 500px at 110% 110%, rgba(17,121,178,0.05), transparent 55%),
+    radial-gradient(1200px 600px at 10% -10%, rgba(177,96,62,0.06), transparent 60%),
+    radial-gradient(1000px 500px at 110% 110%, rgba(178,90,17,0.05), transparent 55%),
     var(--bg-base);
   min-height:100vh; overflow-x:hidden;
   -webkit-font-smoothing:antialiased; color:var(--ink-900);
@@ -49,19 +48,19 @@ body{
 
 .card{background:#fff;border:1px solid var(--line-soft);border-radius:24px;
   box-shadow:0 1px 2px rgba(15,23,42,0.025),0 4px 14px rgba(15,23,42,0.035),0 20px 48px rgba(15,23,42,0.04);}
-.card-hero{background:linear-gradient(180deg,#FFFFFF 0%, #F6FCFB 100%);
-  border:1px solid rgba(43,168,188,0.08);border-radius:28px;
-  box-shadow:0 1px 2px rgba(15,23,42,0.025),0 4px 18px rgba(15,23,42,0.04),0 24px 60px rgba(14,91,102,0.06);}
+.card-hero{background:linear-gradient(180deg,#FFFFFF 0%, #FCF8F1 100%);
+  border:1px solid rgba(177,96,62,0.08);border-radius:28px;
+  box-shadow:0 1px 2px rgba(15,23,42,0.025),0 4px 18px rgba(15,23,42,0.04),0 24px 60px rgba(78,56,43,0.06);}
 
 .btn{transition:transform 0.28s var(--spring), filter 0.2s var(--ease-out), box-shadow 0.28s var(--ease-out), background 0.2s var(--ease-out);will-change:transform;}
 .btn:hover:not(:disabled){transform:translateY(-1.5px);filter:brightness(1.03);}
 .btn:active:not(:disabled){transform:scale(0.965);transition-duration:0.12s;}
 
-.btn-g{background:linear-gradient(135deg,#54C5D2 0%, #31B2C2 58%, #229AA8 100%);
+.btn-g{background:linear-gradient(135deg,#5A443A 0%, #45332B 58%, #362720 100%);
   color:#fff;font-weight:700;letter-spacing:-0.02em;
-  box-shadow:0 1px 2px rgba(14,91,102,0.1),0 6px 16px rgba(43,168,188,0.16),inset 0 1px 0 rgba(255,255,255,0.2);}
-.btn-g:hover:not(:disabled){background:linear-gradient(135deg,#31B2C2 0%, #229AA8 60%, #1C8593 100%);
-  box-shadow:0 1px 2px rgba(14,91,102,0.25),0 10px 24px rgba(43,168,188,0.2),inset 0 1px 0 rgba(255,255,255,0.2);}
+  box-shadow:0 1px 2px rgba(78,56,43,0.1),0 6px 16px rgba(177,96,62,0.16),inset 0 1px 0 rgba(255,255,255,0.2);}
+.btn-g:hover:not(:disabled){background:linear-gradient(135deg,#4A372E 0%, #362720 60%, #2A1E18 100%);
+  box-shadow:0 1px 2px rgba(78,56,43,0.25),0 10px 24px rgba(177,96,62,0.2),inset 0 1px 0 rgba(255,255,255,0.2);}
 .btn-g:disabled{background:linear-gradient(135deg,#E2E8F0,#CBD5E1);color:#fff;box-shadow:none;cursor:not-allowed;}
 
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -75,7 +74,7 @@ body{
 @keyframes badgeIn{0%{transform:scale(0) translateY(8px);opacity:0}60%{transform:scale(1.1) translateY(-2px);opacity:1}100%{transform:scale(1) translateY(0);opacity:1}}
 @keyframes arrowUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulseRing{0%,100%{box-shadow:0 0 0 0 rgba(43,168,188,.28)}50%{box-shadow:0 0 0 12px rgba(43,168,188,0)}}
+@keyframes pulseRing{0%,100%{box-shadow:0 0 0 0 rgba(177,96,62,.28)}50%{box-shadow:0 0 0 12px rgba(177,96,62,0)}}
 @keyframes countPop{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
 @keyframes spin-cw{to{transform:rotate(360deg)}}
 @keyframes floatA{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-8px) rotate(2deg)}}
@@ -83,7 +82,7 @@ body{
 @keyframes toastIn{0%{opacity:0;transform:translateY(-24px) scale(.94)}60%{transform:translateY(2px) scale(1.01);opacity:1}100%{transform:translateY(0) scale(1)}}
 @keyframes toastOut{to{opacity:0;transform:translateY(-12px) scale(.96)}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-2px)}40%,80%{transform:translateX(2px)}}
-@keyframes glowPulse{0%,100%{box-shadow:0 4px 16px rgba(43,168,188,0.18)}50%{box-shadow:0 4px 24px rgba(43,168,188,0.55),0 0 0 4px rgba(43,168,188,0.2)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 4px 16px rgba(177,96,62,0.18)}50%{box-shadow:0 4px 24px rgba(177,96,62,0.55),0 0 0 4px rgba(177,96,62,0.2)}}
 @keyframes giftPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 
 .fadeIn{animation:fadeIn .35s var(--ease-out) forwards}
@@ -97,20 +96,20 @@ body{
 .countPop{animation:countPop 1.8s ease-in-out infinite}
 
 .tmpl{cursor:pointer;border:1.5px solid var(--line);background:#fff;border-radius:16px;transition:all .3s var(--spring);}
-.tmpl:hover{transform:translateY(-1.5px);box-shadow:0 6px 18px rgba(15,23,42,0.06);border-color:rgba(43,168,188,0.14);}
-.tmpl.sel{background:linear-gradient(180deg,#EAF7F6 0%, #EDF7F6 100%);border-color:#2BA8BC;
-  box-shadow:0 4px 14px rgba(43,168,188,.14), inset 0 0 0 1px rgba(43,168,188,0.15);}
+.tmpl:hover{transform:translateY(-1.5px);box-shadow:0 6px 18px rgba(15,23,42,0.06);border-color:rgba(177,96,62,0.14);}
+.tmpl.sel{background:linear-gradient(180deg,#FAF3E8 0%, #FAF4EB 100%);border-color:#B1603E;
+  box-shadow:0 4px 14px rgba(177,96,62,.14), inset 0 0 0 1px rgba(177,96,62,0.15);}
 
-.dept-h{position:sticky;top:0;z-index:1;background:rgba(234,247,246,0.92);
+.dept-h{position:sticky;top:0;z-index:1;background:rgba(251,240,220,0.92);
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  padding:6px 14px;font-size:10px;font-weight:800;color:#0E6B79;
-  text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid rgba(43,168,188,0.1);}
+  padding:6px 14px;font-size:10px;font-weight:800;color:#5C4033;
+  text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid rgba(177,96,62,0.1);}
 
-input:focus,textarea:focus{outline:none;box-shadow:0 0 0 4px rgba(43,168,188,.14), inset 0 0 0 1.5px #2BA8BC;}
+input:focus,textarea:focus{outline:none;box-shadow:0 0 0 4px rgba(177,96,62,.14), inset 0 0 0 1.5px #B1603E;}
 
 ::-webkit-scrollbar{width:5px;height:5px;}
-::-webkit-scrollbar-thumb{background:rgba(43,168,188,0.14);border-radius:3px;}
-::-webkit-scrollbar-thumb:hover{background:rgba(43,168,188,0.4);}
+::-webkit-scrollbar-thumb{background:rgba(177,96,62,0.14);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(177,96,62,0.4);}
 
 input,textarea,select{font-family:inherit;}
 
@@ -129,7 +128,7 @@ body.modal-open{overflow:hidden;}
 .cbit{position:fixed;top:-20px;z-index:200;width:8px;height:12px;border-radius:2px;pointer-events:none;animation:confettiFall 2.5s ease-in forwards;}
 
 .sp{display:inline-block;width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,0.32);border-top-color:#fff;animation:spin-cw 0.7s linear infinite;flex-shrink:0;}
-.sp-g{border-color:rgba(43,168,188,0.18);border-top-color:#2BA8BC;}
+.sp-g{border-color:rgba(177,96,62,0.18);border-top-color:#B1603E;}
 
 .pin-input::placeholder{font-size:0.78rem;font-weight:500;letter-spacing:0.02em;color:var(--ink-400);}
 
@@ -140,28 +139,28 @@ body.modal-open{overflow:hidden;}
 
 .ipt{background:#F8FAFC;border:1.5px solid var(--line);border-radius:16px;
   transition:border-color .2s var(--ease-out), background .2s var(--ease-out);}
-.ipt:hover{border-color:rgba(43,168,188,0.22);background:#fff;}
+.ipt:hover{border-color:rgba(177,96,62,0.22);background:#fff;}
 
-.chip-g{background:linear-gradient(135deg,#EAF7F6 0%, #DAEFF0 100%);color:#0E6B79;border:1px solid rgba(43,168,188,0.18);}
+.chip-g{background:linear-gradient(135deg,#FAF3E8 0%, #F4E6D3 100%);color:#5C4033;border:1px solid rgba(177,96,62,0.18);}
 
 .tab-btn{flex:1;padding:9px 12px;border-radius:12px;
   font-size:13px;font-weight:700;letter-spacing:-0.02em;
   color:#64748B;background:transparent;
   transition:all .25s var(--spring);
   display:flex;align-items:center;justify-content:center;gap:6px;}
-.tab-btn.active{background:#fff;color:#0E6B79;
+.tab-btn.active{background:#fff;color:#5C4033;
   box-shadow:0 1px 2px rgba(15,23,42,0.04),0 4px 12px rgba(15,23,42,0.06);}
 
-.guide-banner{background:linear-gradient(180deg,#EDF7F6 0%, #EAF7F6 100%);
-  border:1px solid rgba(43,168,188,0.16);border-radius:14px;
-  padding:11px 13px;font-size:11.5px;font-weight:500;color:#0E5B66;
+.guide-banner{background:linear-gradient(180deg,#FAF4EB 0%, #FAF3E8 100%);
+  border:1px solid rgba(177,96,62,0.16);border-radius:14px;
+  padding:11px 13px;font-size:11.5px;font-weight:500;color:#4E382B;
   line-height:1.65;letter-spacing:-0.015em;}
 
 .toast-wrap{position:fixed;left:50%;top:18px;transform:translateX(-50%);
   z-index:120;width:calc(100% - 32px);max-width:380px;pointer-events:none;}
-.toast{background:linear-gradient(135deg,#229AA8 0%,#54C5D2 100%);color:#fff;
+.toast{background:linear-gradient(135deg,#A4492D 0%,#D28B62 100%);color:#fff;
   border-radius:18px;padding:13px 16px;display:flex;align-items:center;gap:11px;
-  box-shadow:0 4px 14px rgba(14,91,102,0.32),0 16px 40px rgba(14,91,102,0.18);
+  box-shadow:0 4px 14px rgba(78,56,43,0.32),0 16px 40px rgba(78,56,43,0.18);
   animation:toastIn .55s var(--spring) forwards;
   pointer-events:auto;cursor:pointer;border:1px solid rgba(255,255,255,0.18);}
 .toast.leaving{animation:toastOut .35s var(--ease-out) forwards;}
@@ -169,7 +168,7 @@ body.modal-open{overflow:hidden;}
   display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .btn-shake{animation:shake .55s ease-in-out, glowPulse 1.6s ease-in-out 0.55s 2;}
 
-.rule-card{background:linear-gradient(180deg,#FFFFFF 0%, #F6FCFB 100%);
+.rule-card{background:linear-gradient(180deg,#FFFFFF 0%, #FCF8F1 100%);
   border:1px solid var(--line-soft);border-radius:20px;padding:14px 16px;
   box-shadow:0 1px 2px rgba(15,23,42,0.025),0 4px 14px rgba(15,23,42,0.025);}
 .rule-line{display:flex;align-items:center;gap:10px;padding:5px 0;
@@ -182,7 +181,7 @@ body.modal-open{overflow:hidden;}
   display:flex;align-items:center;justify-content:center;
   background:transparent;border:none;cursor:pointer;
   color:#94A3B8;transition:color .15s var(--ease-out), background .15s var(--ease-out);}
-.pin-eye:hover{color:#2BA8BC;background:rgba(43,168,188,0.08);}
+.pin-eye:hover{color:#B1603E;background:rgba(177,96,62,0.08);}
 .pin-eye:active{transform:translateY(-50%) scale(0.92);}
 
 .milestone-card{
@@ -200,46 +199,46 @@ body.modal-open{overflow:hidden;}
   border-top:1px solid rgba(15,23,42,0.06);
 }
 .supported-line{flex:1;height:1px;max-width:36px;
-  background:linear-gradient(90deg,transparent,#B7E4E8);}
-.supported-line.right{background:linear-gradient(90deg,#B7E4E8,transparent);}
+  background:linear-gradient(90deg,transparent,#EBD5B7);}
+.supported-line.right{background:linear-gradient(90deg,#EBD5B7,transparent);}
 .supported-content{text-align:center;}
 .supported-label{font-size:9.5px;font-weight:700;color:#94A3B8;
   letter-spacing:0.18em;text-transform:uppercase;display:block;margin-bottom:3px;}
 .supported-name{font-size:13px;font-weight:800;
-  background:linear-gradient(135deg,#047857,#10B981);
+  background:linear-gradient(135deg,#8B4F38,#A4492D);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   letter-spacing:-0.01em;}
 
-.notice-banner{background:linear-gradient(135deg,#DAEFF0,#BFE6EA);
-  border:1.5px solid rgba(43,168,188,0.45);border-radius:16px;padding:12px 14px;
+.notice-banner{background:linear-gradient(135deg,#F4E6D3,#E9D2B2);
+  border:1.5px solid rgba(177,96,62,0.45);border-radius:16px;padding:12px 14px;
   display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;
-  box-shadow:0 2px 8px rgba(43,168,188,0.18);}
+  box-shadow:0 2px 8px rgba(177,96,62,0.18);}
 .notice-banner .nico{font-size:18px;flex-shrink:0;}
-.notice-banner .ntext{flex:1;font-size:12.5px;color:#0C4A52;font-weight:600;
+.notice-banner .ntext{flex:1;font-size:12.5px;color:#3B2A20;font-weight:600;
   letter-spacing:-0.015em;line-height:1.55;white-space:pre-wrap;}
 .notice-banner .nclose{flex-shrink:0;width:24px;height:24px;border-radius:50%;
-  background:rgba(14,91,102,0.1);color:#0C4A52;border:none;cursor:pointer;
+  background:rgba(78,56,43,0.1);color:#3B2A20;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:background .2s;}
-.notice-banner .nclose:hover{background:rgba(14,91,102,0.2);}
+.notice-banner .nclose:hover{background:rgba(78,56,43,0.2);}
 
 .admin-tab{flex:1;padding:8px 4px;border-radius:10px;
   font-size:10.5px;font-weight:700;letter-spacing:-0.02em;
   color:#64748B;background:transparent;cursor:pointer;
   transition:all .2s;text-align:center;border:none;
   display:flex;align-items:center;justify-content:center;gap:3px;}
-.admin-tab.active{background:linear-gradient(135deg,#54C5D2,#31B2C2);color:#fff;
-  box-shadow:0 2px 8px rgba(43,168,188,0.16);}
+.admin-tab.active{background:linear-gradient(135deg,#554036,#3C2C24);color:#fff;
+  box-shadow:0 2px 8px rgba(177,96,62,0.16);}
 .admin-card{background:#fff;border:1px solid var(--line-soft);border-radius:14px;
   padding:14px;}
-.admin-stat-card{background:linear-gradient(135deg,#EAF7F6,#EDF7F6);
-  border:1px solid rgba(43,168,188,0.18);border-radius:14px;padding:12px;}
+.admin-stat-card{background:linear-gradient(135deg,#FAF3E8,#FAF4EB);
+  border:1px solid rgba(177,96,62,0.18);border-radius:14px;padding:12px;}
 .adm-btn{padding:7px 12px;border-radius:10px;font-size:11px;font-weight:700;
   letter-spacing:-0.02em;cursor:pointer;border:none;transition:all .2s;
   display:inline-flex;align-items:center;gap:4px;}
-.adm-btn-g{background:linear-gradient(135deg,#54C5D2,#31B2C2);color:#fff;
-  box-shadow:0 1px 4px rgba(43,168,188,0.14);}
-.adm-btn-g:hover{box-shadow:0 4px 12px rgba(43,168,188,0.2);}
+.adm-btn-g{background:linear-gradient(135deg,#554036,#3C2C24);color:#fff;
+  box-shadow:0 1px 4px rgba(177,96,62,0.14);}
+.adm-btn-g:hover{box-shadow:0 4px 12px rgba(177,96,62,0.2);}
 .adm-btn-r{background:linear-gradient(135deg,#F87171,#EF4444);color:#fff;
   box-shadow:0 1px 4px rgba(239,68,68,0.25);}
 .adm-btn-w{background:#F8FAFC;color:#64748B;border:1px solid var(--line);}
@@ -250,8 +249,8 @@ body.modal-open{overflow:hidden;}
 /* 토글 스위치 */
 .toggle-sw{position:relative;width:48px;height:28px;border-radius:9999px;cursor:pointer;
   transition:background .25s var(--ease-out);flex-shrink:0;border:none;padding:0;}
-.toggle-sw.on{background:linear-gradient(135deg,#54C5D2,#31B2C2);
-  box-shadow:0 1px 3px rgba(14,91,102,0.25),inset 0 1px 0 rgba(255,255,255,0.18);}
+.toggle-sw.on{background:linear-gradient(135deg,#554036,#3C2C24);
+  box-shadow:0 1px 3px rgba(78,56,43,0.25),inset 0 1px 0 rgba(255,255,255,0.18);}
 .toggle-sw.off{background:#CBD5E1;box-shadow:inset 0 1px 3px rgba(0,0,0,0.08);}
 .toggle-sw .knob{position:absolute;top:2px;width:24px;height:24px;border-radius:50%;
   background:#fff;transition:left .28s var(--spring);
@@ -260,13 +259,13 @@ body.modal-open{overflow:hidden;}
 .toggle-sw.off .knob{left:2px;}
 
 /* 이메일 알림 카드 */
-.email-pref-card{background:linear-gradient(180deg,#FFFFFF 0%, #F6FCFB 100%);
+.email-pref-card{background:linear-gradient(180deg,#FFFFFF 0%, #FCF8F1 100%);
   border:1px solid var(--line-soft);border-radius:20px;padding:14px 16px;
   box-shadow:0 1px 2px rgba(15,23,42,0.025),0 4px 14px rgba(15,23,42,0.025);
   display:flex;align-items:center;gap:12px;}
 .email-pref-card .epi{font-size:24px;flex-shrink:0;width:40px;height:40px;
   display:flex;align-items:center;justify-content:center;border-radius:12px;
-  background:linear-gradient(135deg,#EAF7F6,#DAEFF0);}
+  background:linear-gradient(135deg,#FAF3E8,#F4E6D3);}
 .email-pref-card .epc{flex:1;min-width:0;}
 .email-pref-card .epc .ept{font-size:13px;font-weight:800;color:#0F172A;letter-spacing:-0.025em;}
 .email-pref-card .epc .epd{font-size:11.5px;font-weight:500;color:#64748B;letter-spacing:-0.015em;margin-top:2px;}
@@ -280,14 +279,14 @@ body.modal-open{overflow:hidden;}
   flex-shrink:0;width:54px;text-align:center;cursor:pointer;
   border-radius:10px;padding:6px 4px;transition:all .15s;}
 .gift-cell.disabled{opacity:0.32;cursor:not-allowed;}
-.gift-cell.given{background:linear-gradient(135deg,#EAF7F6,#DAEFF0);}
-.gift-cell.pending-cell{background:#FFFBEB;border:1px dashed #F59E0B;}
+.gift-cell.given{background:linear-gradient(135deg,#FAF3E8,#F4E6D3);}
+.gift-cell.pending-cell{background:#FFFBEB;border:1px dashed #D28B62;}
 .gift-cell:not(.disabled):hover{transform:scale(1.04);}
 .gift-cell .lvl{font-size:10px;font-weight:800;color:#475569;letter-spacing:0.04em;}
 .gift-cell .ico{font-size:18px;line-height:1;}
 .gift-cell .stat{font-size:9px;font-weight:700;letter-spacing:-0.01em;}
-.gift-cell.given .stat{color:#0E6B79;}
-.gift-cell.pending-cell .stat{color:#B45309;}
+.gift-cell.given .stat{color:#5C4033;}
+.gift-cell.pending-cell .stat{color:#96552F;}
 
 /* ⭐ 하단 도달자 티커 (작고 은은하게 · 닫기 가능) */
 .ticker-bar{
@@ -295,7 +294,7 @@ body.modal-open{overflow:hidden;}
   height:26px;display:flex;align-items:center;overflow:hidden;
   background:rgba(255,255,255,0.82);
   backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);
-  border-top:1px solid rgba(43,168,188,0.16);
+  border-top:1px solid rgba(177,96,62,0.16);
   box-shadow:0 -1px 6px rgba(15,23,42,0.04);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -304,19 +303,19 @@ body.modal-open{overflow:hidden;}
   flex-shrink:0;display:flex;align-items:center;gap:4px;z-index:3;
   height:100%;padding:0 9px 0 11px;
   background:rgba(255,255,255,0.92);
-  font-size:10px;font-weight:800;letter-spacing:-0.01em;color:#1791A2;
-  border-right:1px solid rgba(43,168,188,0.14);}
-.ticker-label .tl-dot{width:5px;height:5px;border-radius:50%;background:#2BA8BC;
-  box-shadow:0 0 0 0 rgba(43,168,188,0.5);animation:tlPulse 2s ease-in-out infinite;}
-@keyframes tlPulse{0%,100%{box-shadow:0 0 0 0 rgba(43,168,188,0.45)}50%{box-shadow:0 0 0 4px rgba(43,168,188,0)}}
+  font-size:10px;font-weight:800;letter-spacing:-0.01em;color:#96552F;
+  border-right:1px solid rgba(177,96,62,0.14);}
+.ticker-label .tl-dot{width:5px;height:5px;border-radius:50%;background:#B1603E;
+  box-shadow:0 0 0 0 rgba(177,96,62,0.5);animation:tlPulse 2s ease-in-out infinite;}
+@keyframes tlPulse{0%,100%{box-shadow:0 0 0 0 rgba(177,96,62,0.45)}50%{box-shadow:0 0 0 4px rgba(177,96,62,0)}}
 /* 우측 닫기(X) 버튼 */
 .ticker-close{
   flex-shrink:0;z-index:4;height:100%;width:30px;
   display:flex;align-items:center;justify-content:center;
   background:rgba(255,255,255,0.92);border:none;cursor:pointer;padding:0;
-  border-left:1px solid rgba(43,168,188,0.12);color:#94A3B8;
+  border-left:1px solid rgba(177,96,62,0.12);color:#94A3B8;
   transition:color .15s ease, background .15s ease;}
-.ticker-close:hover{color:#1791A2;background:rgba(43,168,188,0.08);}
+.ticker-close:hover{color:#96552F;background:rgba(177,96,62,0.08);}
 .ticker-close:active{transform:scale(0.9);}
 .ticker-fade{position:absolute;right:30px;top:0;bottom:0;width:24px;z-index:2;
   background:linear-gradient(270deg,rgba(255,255,255,0.9),transparent);pointer-events:none;}
@@ -325,16 +324,15 @@ body.modal-open{overflow:hidden;}
 @keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .ticker-item{display:inline-flex;align-items:center;gap:5px;padding:0 14px;
   font-size:11px;font-weight:600;letter-spacing:-0.01em;color:#475569;}
-.ticker-item b{font-weight:800;color:#0E6B79;}
+.ticker-item b{font-weight:800;color:#5C4033;}
 .ticker-item .tk-medal{flex-shrink:0;}
-.ticker-item .tk-dot{color:rgba(43,168,188,0.2);font-weight:400;margin-left:5px;}
+.ticker-item .tk-dot{color:rgba(177,96,62,0.2);font-weight:400;margin-left:5px;}
 .ticker-pad{height:34px;}
 
 /* ============================================================
-   🌊 계절 배경 (Seasonal Ambient Background) — 여름 (v3: 잔잔한 수면·윤슬·방울)
-   - 딱딱한 파도 실루엣 없이, 투명한 수면 빛/방울만으로 은은하게
+   🍂 계절 배경 (Seasonal Ambient Background) — 가을 (노을빛·낙엽·윤슬)
    - 전부 transform / opacity 기반 → 합성(GPU) 스레드에서만 동작, 가벼움
-   - 계절 교체: <body> 클래스를 season-autumn / season-winter 로 바꾸고
+   - 계절 교체: <body> 클래스를 season-winter 등으로 바꾸고
      같은 패턴으로 .season-XXX 블록만 추가하면 됨
    ============================================================ */
 #season-bg{
@@ -342,310 +340,181 @@ body.modal-open{overflow:hidden;}
   pointer-events:none; transform:translateZ(0);
 }
 
-/* ---- 여름 팔레트: 경계 없이 매끄럽게 깊어지는 물빛 (수평선 띠 제거) ---- */
-.season-summer #season-bg{
+/* ---- 가을 팔레트: 경계 없이 매끄럽게 깊어지는 노을빛 하늘 ---- */
+.season-autumn #season-bg{
   background:linear-gradient(180deg,
-    #F7FCFD 0%,
-    #EDF8FB 24%,
-    #E0F2F5 37%,
-    #CBE8EC 48%,
-    #ADDCE2 57%,
-    #8ECDD6 65%,
-    #76C2CE 73%,   /* 가장 깊은 청록-블루 (부드럽게) */
-    #74C3C9 80%,
-    #90D4CC 87%,
-    #B9E7DE 94%,
-    #E2F2EB 100%); /* 물가(모래가 위에 얹힘) */
+    #FFFBF3 0%, #FFFAF5 20%, #FEF5EF 38%, #FDF1E9 55%, #FAE5D6 68%,
+    #F6D2BC 79%, #F0C3A9 87%, #E9B599 93%, #E5AF92 97%, #DEA588 100%);
 }
-/* 상단 하늘의 옅은 햇무리(따뜻함) */
-.season-summer #season-bg::before{
+/* 상단 하늘의 옅은 햇무리 + 아래쪽 노을 물듦 */
+.season-autumn #season-bg::before{
   content:""; position:absolute; inset:0;
-  background:radial-gradient(54% 40% at 84% -8%,
-    rgba(255,244,214,0.55), rgba(255,244,214,0) 62%);
-}
-
-/* 햇살 (우상단에서 아주 천천히 호흡) */
-.season-summer .s-sun{
-  position:absolute; top:-98px; right:-64px; width:256px; height:256px;
-  border-radius:50%;
-  background:radial-gradient(circle,
-    rgba(255,250,232,0.8) 0%,
-    rgba(255,238,184,0.4) 40%,
-    rgba(255,238,184,0) 70%);
-  animation:s-sun-breathe 13s ease-in-out infinite;
-  will-change:transform,opacity;
-}
-@keyframes s-sun-breathe{
-  0%,100%{transform:scale(1);opacity:.78}
-  50%{transform:scale(1.06);opacity:.96}
-}
-
-/* 잔잔히 일렁이는 수면 빛(윤슬) — 크고 부드러운 빛이 천천히 떠다님
-   딱딱한 가장자리 없이 blur로만 표현 → 인위적이지 않게 */
-.season-summer .s-shimmer{
-  position:absolute; left:-22%; width:144%; border-radius:50%;
-  filter:blur(42px); opacity:0; will-change:transform,opacity;
-}
-.season-summer .s-shimmer--a{
-  bottom:15%; height:190px;
-  background:radial-gradient(ellipse 58% 100% at 38% 50%,
-    rgba(255,255,255,0.5) 0%, rgba(206,242,240,0.18) 46%, rgba(255,255,255,0) 72%);
-  animation:s-shimmer-a 26s ease-in-out infinite;
-}
-.season-summer .s-shimmer--b{
-  bottom:4%; height:160px;
-  background:radial-gradient(ellipse 54% 100% at 66% 50%,
-    rgba(222,248,244,0.42) 0%, rgba(255,255,255,0.12) 52%, rgba(255,255,255,0) 74%);
-  animation:s-shimmer-b 33s ease-in-out infinite;
-}
-@keyframes s-shimmer-a{
-  0%,100%{opacity:.32;transform:translateX(-4%) scale(1)}
-  50%{opacity:.66;transform:translateX(5%) scale(1.05)}
-}
-@keyframes s-shimmer-b{
-  0%,100%{opacity:.26;transform:translateX(4%) scale(1.04)}
-  50%{opacity:.58;transform:translateX(-5%) scale(1)}
-}
-
-/* 수면에 어른거리는 빛(카우스틱) — 크게 번진 빛이 아주 천천히 흐름 (바다 깊이감) */
-.season-summer .s-caustics{
-  position:absolute; left:-12%; right:-12%; bottom:9%; height:40%;
   background:
-    radial-gradient(ellipse 20% 58% at 18% 42%, rgba(255,255,255,0.18), transparent 60%),
-    radial-gradient(ellipse 24% 52% at 50% 62%, rgba(255,255,255,0.14), transparent 62%),
-    radial-gradient(ellipse 18% 50% at 80% 46%, rgba(255,255,255,0.16), transparent 60%);
-  filter:blur(28px); opacity:.62; will-change:transform,opacity;
-  animation:s-caustics-drift 34s ease-in-out infinite;
-}
-@keyframes s-caustics-drift{
-  0%,100%{transform:translateX(-3%) scale(1)}
-  50%{transform:translateX(3%) scale(1.06)}
+    radial-gradient(52% 36% at 84% -6%, rgba(255,236,225,0.5), rgba(255,236,225,0) 62%),
+    radial-gradient(72% 30% at 46% 104%, rgba(227,159,127,0.28), rgba(227,159,127,0) 72%);
 }
 
-/* 떠오르는 투명 방울 — 물가에서 솟아 천천히 흔들리며 위로, 옅게 사라짐
-   각 방울은 inline 변수(--sz/--dur/--delay/--sway)로 크기·속도·궤적 분산 */
-.season-summer .s-bubbles{
-  position:absolute; left:0; right:0; bottom:96px; height:46%; overflow:hidden;
+/* 가을 햇살 (우상단에서 아주 천천히 호흡) */
+.season-autumn .a-sun{
+  position:absolute; top:-98px; right:-64px; width:256px; height:256px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,243,232,0.85) 0%, rgba(252,222,204,0.42) 40%, rgba(252,222,204,0) 70%);
+  animation:a-sun-breathe 14s ease-in-out infinite; will-change:transform,opacity;
 }
-.season-summer .s-bubbles i{
-  position:absolute; bottom:0; width:var(--sz,8px); height:var(--sz,8px);
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 26%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.42) 16%, rgba(255,255,255,0) 36%),
-    radial-gradient(circle at 50% 50%, rgba(255,255,255,0) 55%, rgba(255,255,255,0.22) 73%, rgba(255,255,255,0.6) 88%, rgba(255,255,255,0.16) 96%, rgba(255,255,255,0) 100%);
-  box-shadow:inset 0 0 5px rgba(255,255,255,0.3), 0 0 10px rgba(255,255,255,0.16);
-  opacity:0;
-  animation:s-rise var(--dur,18s) ease-in-out var(--delay,0s) infinite;
-  will-change:transform,opacity;
-}
-@keyframes s-rise{
-  0%  {opacity:0;   transform:translate(0,0) scale(.82)}
-  10% {opacity:calc(var(--maxop,.85) * .62)}
-  22% {opacity:var(--maxop,.85); transform:translate(var(--sway,12px), -54px) scale(.95)}
-  50% {opacity:calc(var(--maxop,.85) * .96); transform:translate(0, -118px) scale(1)}
-  75% {transform:translate(calc(var(--sway,12px) * -1), -178px) scale(1.02)}
-  88% {opacity:calc(var(--maxop,.85) * .5)}
-  100%{opacity:0;   transform:translate(0, -236px) scale(1.05)}
+@keyframes a-sun-breathe{0%,100%{transform:scale(1);opacity:.75}50%{transform:scale(1.06);opacity:.95}}
+
+/* 아래쪽에 번지는 노을빛 */
+.season-autumn .a-dusk{
+  position:absolute; left:-12%; right:-12%; bottom:5%; height:34%;
+  background:radial-gradient(ellipse 62% 80% at 50% 88%, rgba(250,172,118,0.3) 0%, rgba(250,172,118,0) 72%);
+  filter:blur(30px);
 }
 
-/* 윤슬 반짝임 점들 — 더 또렷하고 많게(청량감), 떠오르듯 부드럽게 깜빡
-   각 점은 inline 변수(--sz/--dur/--delay)로 크기·주기 분산 */
-.season-summer .s-sparkles i{
+/* 잔잔히 흐르는 따뜻한 빛(가을 윤슬) */
+.season-autumn .a-warmth{
+  position:absolute; left:-22%; width:144%; bottom:11%; height:190px; border-radius:50%;
+  background:radial-gradient(ellipse 56% 100% at 42% 55%, rgba(253,228,210,0.4) 0%, rgba(255,235,222,0.14) 52%, rgba(255,235,222,0) 74%);
+  opacity:0; animation:a-warmth-drift 30s ease-in-out infinite; will-change:transform,opacity;
+}
+@keyframes a-warmth-drift{0%,100%{opacity:.3;transform:translateX(-3%) scale(1)}50%{opacity:.58;transform:translateX(4%) scale(1.05)}}
+
+/* 흩날리며 떨어지는 낙엽 — 각 잎은 inline 변수(--sz/--dur/--delay/--sway/--tilt)로 분산 */
+.season-autumn .a-leaves{position:absolute; inset:0; overflow:hidden;}
+.season-autumn .a-leaves i{
+  position:absolute; top:-34px; width:var(--sz,18px); height:var(--sz,18px);
+  opacity:0; animation:a-fall var(--dur,20s) linear var(--delay,0s) infinite; will-change:transform,opacity;
+}
+.season-autumn .a-leaves i svg{display:block; width:100%; height:100%;}
+@keyframes a-fall{
+  0%  {opacity:0; transform:translate3d(0,-5vh,0) rotate(var(--tilt,0deg))}
+  6%  {opacity:var(--maxop,.85)}
+  26% {transform:translate3d(var(--sway,24px),22vh,0) rotate(calc(var(--tilt,0deg) + 72deg))}
+  50% {opacity:var(--maxop,.85); transform:translate3d(calc(var(--sway,24px) * -0.55),47vh,0) rotate(calc(var(--tilt,0deg) + 148deg))}
+  74% {transform:translate3d(var(--sway,24px),72vh,0) rotate(calc(var(--tilt,0deg) + 224deg))}
+  93% {opacity:calc(var(--maxop,.85) * .8)}
+  100%{opacity:0; transform:translate3d(calc(var(--sway,24px) * -0.3),103vh,0) rotate(calc(var(--tilt,0deg) + 296deg))}
+}
+
+/* 따스한 반짝임 점들 — 은은하게 깜빡이는 가을 햇살 조각 */
+.season-autumn .a-sparkles i{
   position:absolute; width:var(--sz,6px); height:var(--sz,6px); border-radius:50%;
-  background:radial-gradient(circle,
-    #ffffff 0%, rgba(255,255,255,0.92) 26%, rgba(255,255,255,0.3) 52%, rgba(255,255,255,0) 78%);
-  box-shadow:0 0 7px rgba(255,255,255,0.7);
-  opacity:0; animation:s-twinkle var(--dur,4.6s) ease-in-out var(--delay,0s) infinite;
-  will-change:transform,opacity;
+  background:radial-gradient(circle, #FFFAF0 0%, rgba(255,238,204,0.92) 28%, rgba(255,214,150,0.3) 54%, rgba(255,214,150,0) 78%);
+  box-shadow:0 0 7px rgba(255,224,168,0.65);
+  opacity:0; animation:a-twinkle var(--dur,4.8s) ease-in-out var(--delay,0s) infinite; will-change:transform,opacity;
 }
-@keyframes s-twinkle{
+@keyframes a-twinkle{
   0%{opacity:0;transform:translateY(0) scale(.5)}
-  35%{opacity:var(--so,1);transform:translateY(-2px) scale(1)}
-  55%{opacity:calc(var(--so,1) * .9);transform:translateY(-4px) scale(1)}
-  78%{opacity:calc(var(--so,1) * .32);transform:translateY(-6px) scale(.85)}
+  35%{opacity:var(--so,.9);transform:translateY(-2px) scale(1)}
+  55%{opacity:calc(var(--so,.9) * .9);transform:translateY(-4px) scale(1)}
+  78%{opacity:calc(var(--so,.9) * .32);transform:translateY(-6px) scale(.85)}
   100%{opacity:0;transform:translateY(-8px) scale(.5)}
 }
 
-/* 햇살 반사 길(윤슬) — 얇고 투명하게, 좌우로 아주 천천히 */
-.season-summer .s-glint{
-  position:absolute; right:16%; bottom:100px; width:24vw; max-width:170px; height:30%;
-  background:linear-gradient(180deg,
-    rgba(255,251,238,0) 0%,
-    rgba(255,250,232,0.28) 56%,
-    rgba(255,255,255,0.46) 100%);
-  filter:blur(8px); transform-origin:bottom center;
-  animation:s-glint-shimmer 9s ease-in-out infinite;
-  will-change:transform,opacity;
+/* 땅 — 낙엽이 내려앉은 따뜻한 흙빛 (맨 아래) */
+.season-autumn .a-ground{
+  position:absolute; left:-5%; right:-5%; bottom:-14px; height:132px;
+  background:
+    radial-gradient(46% 92% at 10% 100%, rgba(207,148,115,0.4), rgba(207,148,115,0) 70%),
+    radial-gradient(40% 84% at 38% 100%, rgba(203,137,95,0.3), rgba(203,137,95,0) 68%),
+    radial-gradient(44% 96% at 66% 100%, rgba(196,124,94,0.36), rgba(196,124,94,0) 70%),
+    radial-gradient(42% 88% at 92% 100%, rgba(206,141,105,0.34), rgba(206,141,105,0) 70%),
+    linear-gradient(180deg, rgba(224,156,86,0) 0%, rgba(213,156,124,0.24) 62%, rgba(207,144,108,0.44) 100%);
+  filter:blur(9px);
 }
-@keyframes s-glint-shimmer{
-  0%,100%{opacity:.28;transform:translateX(0) scaleX(1)}
-  50%{opacity:.52;transform:translateX(-5px) scaleX(1.1)}
+/* 낙엽 더미 실루엣 */
+.season-autumn .a-pile{
+  position:absolute; left:-4%; right:-4%; bottom:-10px; height:78px;
+  background:
+    radial-gradient(34% 100% at 6% 100%, rgba(136,86,66,0.5), rgba(136,86,66,0) 72%),
+    radial-gradient(28% 88% at 27% 100%, rgba(161,103,77,0.46), rgba(161,103,77,0) 70%),
+    radial-gradient(32% 96% at 50% 100%, rgba(141,90,68,0.48), rgba(141,90,68,0) 72%),
+    radial-gradient(28% 86% at 72% 100%, rgba(170,102,75,0.44), rgba(170,102,75,0) 70%),
+    radial-gradient(34% 98% at 94% 100%, rgba(144,89,66,0.48), rgba(144,89,66,0) 72%);
+  filter:blur(5px);
 }
-
-/* 물가의 부드러운 빛 — 딱딱한 포말선 없이 넓고 은은한 빛으로 물·모래 경계 */
-.season-summer .s-shore{
-  position:absolute; left:-10%; right:-10%; bottom:94px; height:46px;
-  background:radial-gradient(ellipse 74% 100% at 50% 100%,
-    rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 74%);
-  filter:blur(11px);
-  animation:s-shore-breathe 11s ease-in-out infinite;
-  will-change:transform,opacity;
-}
-@keyframes s-shore-breathe{
-  0%,100%{opacity:.24;transform:translateY(3px) scaleX(1)}
-  50%{opacity:.48;transform:translateY(-2px) scaleX(1.05)}
-}
-
-/* 해변 모래 — 더 넉넉한 모래사장 (윗단은 긴 페이드로 물과 부드럽게 이어짐) */
-.season-summer .s-sand{
-  position:absolute; left:0; right:0; bottom:0; height:128px;
-  background:linear-gradient(180deg,
-    rgba(245,233,205,0) 0%,
-    rgba(243,229,197,0.32) 24%,
-    rgba(240,224,188,0.68) 48%,
-    rgba(238,220,180,0.94) 72%,
-    #EEDAAE 100%);
-}
-/* 모래 위 잔잔한 결(은은한 줄무늬) */
-.season-summer .s-sand::after{
-  content:""; position:absolute; inset:0;
-  background:repeating-linear-gradient(180deg,
-    rgba(255,255,255,0) 0 8px, rgba(255,255,255,0.045) 8px 9px);
-  opacity:.55;
-}
-.season-summer .s-rays{
-  position:absolute; top:-8%; right:-6%; width:78%; height:82%;
-  background:repeating-linear-gradient(64deg,
-    rgba(255,251,232,0) 0 24px, rgba(255,251,232,0.06) 24px 38px, rgba(255,251,232,0) 38px 76px);
-  filter:blur(4px); opacity:.6; transform-origin:top right;
-  animation:s-rays-drift 18s ease-in-out infinite; will-change:transform,opacity;
-}
-@keyframes s-rays-drift{0%,100%{transform:translateX(0) rotate(0deg);opacity:.5}50%{transform:translateX(-14px) rotate(1.1deg);opacity:.8}}
-.season-summer .s-foam{
-  position:absolute; left:-6%; right:-6%; bottom:96px; height:26px;
-  background:radial-gradient(ellipse 60% 100% at 50% 100%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 72%);
-  filter:blur(6px); opacity:.5;
-  animation:s-foam-wash 10s ease-in-out infinite; will-change:transform,opacity;
-}
-@keyframes s-foam-wash{0%,100%{transform:translateY(6px) scaleX(0.98);opacity:.32}50%{transform:translateY(-4px) scaleX(1.04);opacity:.6}}
 .diary-tip-wrap{position:relative;}
 .diary-tip{position:absolute; left:50%; bottom:calc(100% + 10px); transform:translateX(-50%) translateY(4px);
   width:min(280px,86vw); padding:12px 14px; border-radius:14px;
-  background:linear-gradient(135deg,rgba(218,239,240,0.97),rgba(191,230,234,0.97));
-  border:1px solid rgba(43,168,188,0.4); box-shadow:0 8px 24px rgba(14,91,102,0.16);
-  color:#0C4A52; font-size:11.5px; line-height:1.65; font-weight:700; letter-spacing:-0.01em; text-align:left;
+  background:linear-gradient(135deg,rgba(249,228,196,0.97),rgba(245,214,168,0.97));
+  border:1px solid rgba(177,96,62,0.4); box-shadow:0 8px 24px rgba(78,56,43,0.16);
+  color:#3B2A20; font-size:11.5px; line-height:1.65; font-weight:700; letter-spacing:-0.01em; text-align:left;
   opacity:0; pointer-events:none; z-index:40; transition:opacity .22s ease, transform .22s ease; backdrop-filter:blur(6px);}
-.diary-tip::after{content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:7px solid transparent; border-top-color:rgba(191,230,234,0.97);}
+.diary-tip::after{content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:7px solid transparent; border-top-color:rgba(245,214,168,0.97);}
 .diary-tip-wrap:hover .diary-tip, .diary-tip-wrap:focus-within .diary-tip{opacity:1; transform:translateX(-50%) translateY(0);}
 @media (hover:none){.diary-tip{display:none;}}
 
 /* 접근성: 모션 최소화 설정 시 애니메이션 정지(정적 풍경은 유지) */
 @media (prefers-reduced-motion:reduce){
-  .season-summer .s-sun,
-  .season-summer .s-shimmer,
-  .season-summer .s-caustics,
-  .season-summer .s-bubbles i,
-  .season-summer .s-sparkles i,
-  .season-summer .s-glint,
-  .season-summer .s-shore,
-  .season-summer .s-foam,
-  .season-summer .s-rays{animation:none !important;}
-  .season-summer .s-shimmer{opacity:.32;}
-  .season-summer .s-sparkles i{opacity:.5;}
+  .season-autumn .a-sun, .season-autumn .a-warmth,
+  .season-autumn .a-leaves i, .season-autumn .a-sparkles i{animation:none !important;}
+  .season-autumn .a-warmth{opacity:.35;}
+  .season-autumn .a-leaves i{opacity:0;}
+  .season-autumn .a-sparkles i{opacity:.45;}
 }
 
-/* ───────── 반투명 글래스 카드 (배경 바다가 은은히 비치도록 · 가독성 유지) ───────── */
+/* ───────── 반투명 글래스 카드 (배경 가을 풍경이 은은히 비치도록 · 가독성 유지) ───────── */
 .card{background:rgba(255,255,255,0.74);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);}
-.card-hero{background:linear-gradient(180deg,rgba(255,255,255,0.80),rgba(246,252,251,0.68));backdrop-filter:blur(18px) saturate(155%);-webkit-backdrop-filter:blur(18px) saturate(155%);}
-.rule-card{background:linear-gradient(180deg,rgba(255,255,255,0.76),rgba(246,252,251,0.64));backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);}
-.email-pref-card{background:linear-gradient(180deg,rgba(255,255,255,0.76),rgba(246,252,251,0.64));backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);}
+.card-hero{background:linear-gradient(180deg,rgba(255,255,255,0.80),rgba(252,248,241,0.68));backdrop-filter:blur(18px) saturate(155%);-webkit-backdrop-filter:blur(18px) saturate(155%);}
+.rule-card{background:linear-gradient(180deg,rgba(255,255,255,0.76),rgba(252,248,241,0.64));backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);}
+.email-pref-card{background:linear-gradient(180deg,rgba(255,255,255,0.76),rgba(252,248,241,0.64));backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);}
 
-/* ───────── 모바일: 콘텐츠가 화면을 가득 채워도 카드 너머로 바다가 보이게 ───────── */
+/* ───────── 모바일: 콘텐츠가 화면을 가득 채워도 카드 너머로 가을 풍경이 보이게 ───────── */
 @media (max-width:480px){
   .card{background:rgba(255,255,255,0.70);}
-  .card-hero{background:linear-gradient(180deg,rgba(255,255,255,0.78),rgba(246,252,251,0.62));}
-  .rule-card,.email-pref-card{background:linear-gradient(180deg,rgba(255,255,255,0.72),rgba(246,252,251,0.58));}
-  .season-summer .s-caustics{opacity:.72;}
-  .season-summer .s-sand{height:150px;}
+  .card-hero{background:linear-gradient(180deg,rgba(255,255,255,0.78),rgba(252,247,238,0.62));}
+  .rule-card,.email-pref-card{background:linear-gradient(180deg,rgba(255,255,255,0.72),rgba(252,247,238,0.58));}
+  .season-autumn .a-sun{top:-110px; right:-84px; width:216px; height:216px;}
+  .season-autumn .a-ground{height:104px;}
+  .season-autumn .a-pile{height:62px;}
 }
 </style>
 </head>
-<body class="season-summer">
+<body class="season-autumn">
 
 <!-- ============================================================
-     🌊 계절 배경 레이어 (Seasonal Ambient Background)
+     🍂 계절 배경 레이어 (Seasonal Ambient Background) — 가을
      - #root(React) 바깥에 위치 → 앱 로직/기능과 완전히 분리됨
      - 전부 CSS transform/opacity keyframes (JS 0, 합성 스레드에서만 동작)
-     - 계절 교체: <body class="season-summer"> → season-autumn / season-winter
-       로 바꾸고 .season-XXX 블록만 추가하면 됨
+     - 계절 교체: <body class="season-autumn"> → season-winter 등으로
+       바꾸고 .season-XXX 블록만 추가하면 됨
      ============================================================ -->
 <div id="season-bg" aria-hidden="true">
-  <!-- 따뜻한 여름 햇살 -->
-  <div class="s-sun"></div>
-  <!-- 여름 햇살 빛기둥(아주 옅게 일렁임) -->
-  <div class="s-rays"></div>
-  <!-- 잔잔히 일렁이는 수면 빛(윤슬) -->
-  <div class="s-shimmer s-shimmer--a"></div>
-  <div class="s-shimmer s-shimmer--b"></div>
-  <!-- 수면에 어른거리는 빛(카우스틱) -->
-  <div class="s-caustics"></div>
-  <!-- 햇살 반사 길 -->
-  <div class="s-glint"></div>
-  <!-- 떠오르는 투명 방울 (크기 클수록 옅게 → 자연스럽게) -->
-  <div class="s-bubbles">
-    <i style="left:14%;--sz:9px;--dur:16s;--delay:-3s;--sway:12px;--maxop:.9"></i>
-    <i style="left:26%;--sz:22px;--dur:27s;--delay:-9s;--sway:-18px;--maxop:.36"></i>
-    <i style="left:38%;--sz:7px;--dur:14s;--delay:-6s;--sway:10px;--maxop:.9"></i>
-    <i style="left:50%;--sz:14px;--dur:20s;--delay:-1s;--sway:-13px;--maxop:.6"></i>
-    <i style="left:62%;--sz:8px;--dur:17s;--delay:-11s;--sway:14px;--maxop:.9"></i>
-    <i style="left:73%;--sz:26px;--dur:31s;--delay:-4s;--sway:-20px;--maxop:.32"></i>
-    <i style="left:84%;--sz:8px;--dur:15s;--delay:-13s;--sway:11px;--maxop:.9"></i>
-    <i style="left:92%;--sz:11px;--dur:21s;--delay:-7s;--sway:-13px;--maxop:.82"></i>
-    <i style="left:8%;--sz:7px;--dur:18s;--delay:-15s;--sway:9px;--maxop:.9"></i>
-    <i style="left:44%;--sz:19px;--dur:25s;--delay:-19s;--sway:16px;--maxop:.4"></i>
-    <i style="left:67%;--sz:10px;--dur:19s;--delay:-2s;--sway:-11px;--maxop:.84"></i>
-    <i style="left:33%;--sz:6px;--dur:13s;--delay:-8s;--sway:8px;--maxop:.9"></i>
-    <i style="left:79%;--sz:17px;--dur:24s;--delay:-12s;--sway:-15px;--maxop:.44"></i>
-    <i style="left:19%;--sz:13px;--dur:22s;--delay:-5s;--sway:13px;--maxop:.64"></i>
+  <!-- 따뜻한 가을 햇살 -->
+  <div class="a-sun"></div>
+  <!-- 아래쪽에 번지는 노을빛 -->
+  <div class="a-dusk"></div>
+  <!-- 잔잔히 흐르는 따뜻한 빛 -->
+  <div class="a-warmth"></div>
+  <!-- 흩날리며 떨어지는 낙엽 (단풍잎·은행잎·낙엽) -->
+  <div class="a-leaves">
+    <i style="left:4%;--sz:22px;--dur:21s;--delay:-4s;--sway:26px;--maxop:.85;--tilt:-12deg"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 30C16 26 15.5 23.5 15 21.5C11 23 6.5 21.5 4.5 17.5C7 18.5 9.5 18.3 11 17C6.5 15 4 11 4 6.5C8 8 11 10.5 12.6 13.5C12.3 9.5 13.5 5.5 16 2C18.5 5.5 19.7 9.5 19.4 13.5C21 10.5 24 8 28 6.5C28 11 25.5 15 21 17C22.5 18.3 25 18.5 27.5 17.5C25.5 21.5 21 23 17 21.5C16.5 23.5 16 26 16 30Z" fill="#BC5B33"/></svg></i>
+    <i style="left:11%;--sz:13px;--dur:26s;--delay:-14s;--sway:-18px;--maxop:.6;--tilt:24deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 14.8 C9.6 14.6 7 13.4 5.2 11.2 C3.9 9.6 3.2 7.6 3.1 5.6 C6.2 3.6 9.7 3.5 11.4 5.6 C11.7 6 11.9 6.4 12 6.9 C12.1 6.4 12.3 6 12.6 5.6 C14.3 3.5 17.8 3.6 20.9 5.6 C20.8 7.6 20.1 9.6 18.8 11.2 C17 13.4 14.4 14.6 12 14.8 Z" fill="#F0C24B"/><path d="M12 7.1 L12 14.8 L11.5 20.8" stroke="#C69430" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+    <i style="left:18%;--sz:19px;--dur:18s;--delay:-8s;--sway:22px;--maxop:.9;--tilt:8deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 C12.8 3.2 14.8 3.4 15.4 4.8 C16 6.1 15 6.9 15.8 8 C16.7 9.2 18.2 9.1 18.4 10.6 C18.6 12 17.3 12.5 17.2 13.8 C17.1 15.1 18 16 17 17 C16 18 14.6 17.4 13.4 18 C12.9 18.3 12.4 18.7 12 19.2 C11.6 18.7 11.1 18.3 10.6 18 C9.4 17.4 8 18 7 17 C6 16 6.9 15.1 6.8 13.8 C6.7 12.5 5.4 12 5.6 10.6 C5.8 9.1 7.3 9.2 8.2 8 C9 6.9 8 6.1 8.6 4.8 C9.2 3.4 11.2 3.2 12 2 Z" fill="#9A6233"/><path d="M12 4.5 L12 21.5 M12 8.5 C10.4 9.6 9 9.8 7.6 10.4 M12 8.5 C13.6 9.6 15 9.8 16.4 10.4 M12 13 C10.6 13.9 9.3 14.1 8 14.6 M12 13 C13.4 13.9 14.7 14.1 16 14.6" stroke="#6E4620" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.55"/></svg></i>
+    <i style="left:26%;--sz:11px;--dur:29s;--delay:-21s;--sway:-14px;--maxop:.5;--tilt:-20deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C16.8 5.8 18.8 11 17 16.4C15.6 20.4 8.4 20.4 7 16.4C5.2 11 7.2 5.8 12 2Z" fill="#DCAE85"/><path d="M12 4.5V18" stroke="#B4581E" stroke-width="1.1" fill="none" stroke-linecap="round"/></svg></i>
+    <i style="left:33%;--sz:16px;--dur:22s;--delay:-2s;--sway:20px;--maxop:.75;--tilt:16deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 14.8 C9.6 14.6 7 13.4 5.2 11.2 C3.9 9.6 3.2 7.6 3.1 5.6 C6.2 3.6 9.7 3.5 11.4 5.6 C11.7 6 11.9 6.4 12 6.9 C12.1 6.4 12.3 6 12.6 5.6 C14.3 3.5 17.8 3.6 20.9 5.6 C20.8 7.6 20.1 9.6 18.8 11.2 C17 13.4 14.4 14.6 12 14.8 Z" fill="#E8B93E"/><path d="M12 7.1 L12 14.8 L11.5 20.8" stroke="#B98A22" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+    <i style="left:41%;--sz:24px;--dur:19s;--delay:-11s;--sway:-28px;--maxop:.88;--tilt:-6deg"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 30C16 26 15.5 23.5 15 21.5C11 23 6.5 21.5 4.5 17.5C7 18.5 9.5 18.3 11 17C6.5 15 4 11 4 6.5C8 8 11 10.5 12.6 13.5C12.3 9.5 13.5 5.5 16 2C18.5 5.5 19.7 9.5 19.4 13.5C21 10.5 24 8 28 6.5C28 11 25.5 15 21 17C22.5 18.3 25 18.5 27.5 17.5C25.5 21.5 21 23 17 21.5C16.5 23.5 16 26 16 30Z" fill="#A4492D"/></svg></i>
+    <i style="left:48%;--sz:10px;--dur:30s;--delay:-24s;--sway:12px;--maxop:.45;--tilt:28deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 14.8 C9.6 14.6 7 13.4 5.2 11.2 C3.9 9.6 3.2 7.6 3.1 5.6 C6.2 3.6 9.7 3.5 11.4 5.6 C11.7 6 11.9 6.4 12 6.9 C12.1 6.4 12.3 6 12.6 5.6 C14.3 3.5 17.8 3.6 20.9 5.6 C20.8 7.6 20.1 9.6 18.8 11.2 C17 13.4 14.4 14.6 12 14.8 Z" fill="#EFCB62"/><path d="M12 7.1 L12 14.8 L11.5 20.8" stroke="#C69430" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+    <i style="left:55%;--sz:18px;--dur:20s;--delay:-6s;--sway:-22px;--maxop:.85;--tilt:-18deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 C12.8 3.2 14.8 3.4 15.4 4.8 C16 6.1 15 6.9 15.8 8 C16.7 9.2 18.2 9.1 18.4 10.6 C18.6 12 17.3 12.5 17.2 13.8 C17.1 15.1 18 16 17 17 C16 18 14.6 17.4 13.4 18 C12.9 18.3 12.4 18.7 12 19.2 C11.6 18.7 11.1 18.3 10.6 18 C9.4 17.4 8 18 7 17 C6 16 6.9 15.1 6.8 13.8 C6.7 12.5 5.4 12 5.6 10.6 C5.8 9.1 7.3 9.2 8.2 8 C9 6.9 8 6.1 8.6 4.8 C9.2 3.4 11.2 3.2 12 2 Z" fill="#A56A38"/><path d="M12 4.5 L12 21.5 M12 8.5 C10.4 9.6 9 9.8 7.6 10.4 M12 8.5 C13.6 9.6 15 9.8 16.4 10.4 M12 13 C10.6 13.9 9.3 14.1 8 14.6 M12 13 C13.4 13.9 14.7 14.1 16 14.6" stroke="#7A4E24" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.55"/></svg></i>
+    <i style="left:62%;--sz:13px;--dur:25s;--delay:-17s;--sway:16px;--maxop:.6;--tilt:12deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 20C4 10 10 4 20 4C20 14 14 20 4 20Z" fill="#A4492D"/><path d="M6.5 17.5C10 13.5 13.5 10 17.5 6.5" stroke="#7C2D08" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></i>
+    <i style="left:69%;--sz:21px;--dur:17s;--delay:-9s;--sway:-24px;--maxop:.9;--tilt:4deg"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 30C16 26 15.5 23.5 15 21.5C11 23 6.5 21.5 4.5 17.5C7 18.5 9.5 18.3 11 17C6.5 15 4 11 4 6.5C8 8 11 10.5 12.6 13.5C12.3 9.5 13.5 5.5 16 2C18.5 5.5 19.7 9.5 19.4 13.5C21 10.5 24 8 28 6.5C28 11 25.5 15 21 17C22.5 18.3 25 18.5 27.5 17.5C25.5 21.5 21 23 17 21.5C16.5 23.5 16 26 16 30Z" fill="#B4581E"/></svg></i>
+    <i style="left:76%;--sz:12px;--dur:27s;--delay:-19s;--sway:14px;--maxop:.55;--tilt:-26deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 14.8 C9.6 14.6 7 13.4 5.2 11.2 C3.9 9.6 3.2 7.6 3.1 5.6 C6.2 3.6 9.7 3.5 11.4 5.6 C11.7 6 11.9 6.4 12 6.9 C12.1 6.4 12.3 6 12.6 5.6 C14.3 3.5 17.8 3.6 20.9 5.6 C20.8 7.6 20.1 9.6 18.8 11.2 C17 13.4 14.4 14.6 12 14.8 Z" fill="#DBA32E"/><path d="M12 7.1 L12 14.8 L11.5 20.8" stroke="#A87B1E" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+    <i style="left:83%;--sz:17px;--dur:21s;--delay:-3s;--sway:-20px;--maxop:.8;--tilt:20deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 20C4 10 10 4 20 4C20 14 14 20 4 20Z" fill="#E07B39"/><path d="M6.5 17.5C10 13.5 13.5 10 17.5 6.5" stroke="#8C4515" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></i>
+    <i style="left:90%;--sz:23px;--dur:16s;--delay:-12s;--sway:24px;--maxop:.88;--tilt:-10deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 C12.8 3.2 14.8 3.4 15.4 4.8 C16 6.1 15 6.9 15.8 8 C16.7 9.2 18.2 9.1 18.4 10.6 C18.6 12 17.3 12.5 17.2 13.8 C17.1 15.1 18 16 17 17 C16 18 14.6 17.4 13.4 18 C12.9 18.3 12.4 18.7 12 19.2 C11.6 18.7 11.1 18.3 10.6 18 C9.4 17.4 8 18 7 17 C6 16 6.9 15.1 6.8 13.8 C6.7 12.5 5.4 12 5.6 10.6 C5.8 9.1 7.3 9.2 8.2 8 C9 6.9 8 6.1 8.6 4.8 C9.2 3.4 11.2 3.2 12 2 Z" fill="#8B5A2B"/><path d="M12 4.5 L12 21.5 M12 8.5 C10.4 9.6 9 9.8 7.6 10.4 M12 8.5 C13.6 9.6 15 9.8 16.4 10.4 M12 13 C10.6 13.9 9.3 14.1 8 14.6 M12 13 C13.4 13.9 14.7 14.1 16 14.6" stroke="#5D4037" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.55"/></svg></i>
+    <i style="left:95%;--sz:12px;--dur:24s;--delay:-22s;--sway:-12px;--maxop:.55;--tilt:14deg"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C16.8 5.8 18.8 11 17 16.4C15.6 20.4 8.4 20.4 7 16.4C5.2 11 7.2 5.8 12 2Z" fill="#D28B62"/><path d="M12 4.5V18" stroke="#A85A28" stroke-width="1.1" fill="none" stroke-linecap="round"/></svg></i>
+    <i style="left:7%;--sz:15px;--dur:23s;--delay:-27s;--sway:18px;--maxop:.7;--tilt:-4deg"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 30C16 26 15.5 23.5 15 21.5C11 23 6.5 21.5 4.5 17.5C7 18.5 9.5 18.3 11 17C6.5 15 4 11 4 6.5C8 8 11 10.5 12.6 13.5C12.3 9.5 13.5 5.5 16 2C18.5 5.5 19.7 9.5 19.4 13.5C21 10.5 24 8 28 6.5C28 11 25.5 15 21 17C22.5 18.3 25 18.5 27.5 17.5C25.5 21.5 21 23 17 21.5C16.5 23.5 16 26 16 30Z" fill="#D97B29"/></svg></i>
   </div>
-  <!-- 윤슬 반짝임 점들 (더 많이·또렷하게) -->
-  <div class="s-sparkles">
-    <i style="left:10%;bottom:16%;--sz:6px;--dur:4.6s;--delay:-.2s"></i>
-    <i style="left:18%;bottom:33%;--sz:5px;--dur:5.2s;--delay:-1.4s"></i>
-    <i style="left:24%;bottom:22%;--sz:7px;--dur:4.0s;--delay:-2.6s"></i>
-    <i style="left:31%;bottom:40%;--sz:4px;--dur:5.6s;--delay:-.8s"></i>
-    <i style="left:37%;bottom:14%;--sz:6px;--dur:4.3s;--delay:-3.1s"></i>
-    <i style="left:43%;bottom:29%;--sz:5px;--dur:5.0s;--delay:-1.7s"></i>
-    <i style="left:50%;bottom:38%;--sz:7px;--dur:4.7s;--delay:-2.2s"></i>
-    <i style="left:56%;bottom:19%;--sz:5px;--dur:5.4s;--delay:-.5s"></i>
-    <i style="left:62%;bottom:31%;--sz:6px;--dur:4.1s;--delay:-3.4s"></i>
-    <i style="left:68%;bottom:43%;--sz:4px;--dur:5.8s;--delay:-1.1s"></i>
-    <i style="left:74%;bottom:24%;--sz:6px;--dur:4.5s;--delay:-2.9s"></i>
-    <i style="left:80%;bottom:36%;--sz:5px;--dur:5.1s;--delay:-.9s"></i>
-    <i style="left:86%;bottom:17%;--sz:7px;--dur:4.4s;--delay:-3.6s"></i>
-    <i style="left:91%;bottom:30%;--sz:5px;--dur:5.5s;--delay:-1.9s"></i>
-    <i style="left:14%;bottom:27%;--sz:4px;--dur:4.8s;--delay:-2.4s"></i>
-    <i style="left:47%;bottom:21%;--sz:5px;--dur:5.3s;--delay:-.3s"></i>
-    <i style="left:28%;bottom:36%;--sz:6px;--dur:4.2s;--delay:-1.9s"></i>
-    <i style="left:54%;bottom:14%;--sz:5px;--dur:5.0s;--delay:-3.2s"></i>
-    <i style="left:70%;bottom:38%;--sz:6px;--dur:4.6s;--delay:-.7s"></i>
-    <i style="left:83%;bottom:25%;--sz:5px;--dur:5.5s;--delay:-2.7s"></i>
-    <!-- 옅은 작은 반짝임(은은하게 바다를 반짝이게) -->
-    <i style="left:21%;bottom:18%;--sz:3px;--dur:5.6s;--delay:-1.2s;--so:.6"></i>
-    <i style="left:35%;bottom:31%;--sz:4px;--dur:4.9s;--delay:-3.0s;--so:.68"></i>
-    <i style="left:52%;bottom:26%;--sz:3px;--dur:6.0s;--delay:-.6s;--so:.55"></i>
-    <i style="left:60%;bottom:16%;--sz:4px;--dur:5.2s;--delay:-2.5s;--so:.64"></i>
-    <i style="left:76%;bottom:33%;--sz:3px;--dur:5.8s;--delay:-1.8s;--so:.58"></i>
-    <i style="left:88%;bottom:21%;--sz:4px;--dur:4.7s;--delay:-3.3s;--so:.66"></i>
-    <i style="left:12%;bottom:37%;--sz:3px;--dur:6.1s;--delay:-.9s;--so:.54"></i>
-    <i style="left:64%;bottom:41%;--sz:4px;--dur:5.4s;--delay:-2.1s;--so:.62"></i>
+
+  <!-- 따스한 반짝임 점들 -->
+  <div class="a-sparkles">
+    <i style="left:12%;bottom:18%;--sz:6px;--dur:4.8s;--delay:-.4s;--so:.75"></i>
+    <i style="left:27%;bottom:30%;--sz:4px;--dur:5.6s;--delay:-2.1s;--so:.6"></i>
+    <i style="left:45%;bottom:16%;--sz:5px;--dur:4.4s;--delay:-1.2s;--so:.7"></i>
+    <i style="left:60%;bottom:34%;--sz:4px;--dur:5.9s;--delay:-3s;--so:.55"></i>
+    <i style="left:75%;bottom:22%;--sz:6px;--dur:4.6s;--delay:-1.8s;--so:.72"></i>
+    <i style="left:88%;bottom:29%;--sz:5px;--dur:5.2s;--delay:-.9s;--so:.62"></i>
   </div>
-  <!-- 물가의 부드러운 빛 -->
-  <div class="s-shore"></div>
-  <!-- 물가에 밀려오는 부드러운 포말 -->
-  <div class="s-foam"></div>
-  <!-- 해변 모래 (맨 아래) -->
-  <div class="s-sand"></div>
+  <!-- 낙엽이 내려앉은 땅 (맨 아래) -->
+  <div class="a-ground"></div>
+  <div class="a-pile"></div>
 </div>
 
 <div id="root"></div>
@@ -656,28 +525,28 @@ body.modal-open{overflow:hidden;}
     transition:opacity .45s ease;opacity:1;
     font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
   #boot-splash.bs-hide{opacity:0;pointer-events:none;}
-  #boot-splash .bs-logo{font-size:64px;line-height:1;margin-bottom:14px;filter:drop-shadow(0 6px 12px rgba(14,107,121,0.22));animation:bsFloat 3s ease-in-out infinite;}
+  #boot-splash .bs-logo{font-size:64px;line-height:1;margin-bottom:14px;filter:drop-shadow(0 6px 12px rgba(92,64,51,0.22));animation:bsFloat 3s ease-in-out infinite;}
   #boot-splash .bs-title{font-family:'Jua','Pretendard Variable',sans-serif;font-size:56px;line-height:1;margin-bottom:14px;
-    background:linear-gradient(135deg,#064E3B 0%,#047857 40%,#10B981 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
-    filter:drop-shadow(0 2px 10px rgba(16,185,129,0.18));}
+    background:linear-gradient(135deg,#3B2A20 0%,#8B4F38 40%,#A4492D 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    filter:drop-shadow(0 2px 10px rgba(164,73,45,0.18));}
   #boot-splash .bs-sub{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;}
   #boot-splash .bs-line{width:32px;height:1px;display:block;}
   #boot-splash .bs-org{font-size:10px;color:#94A3B8;font-weight:800;letter-spacing:.14em;text-transform:uppercase;}
-  #boot-splash .bs-tag{font-size:12px;font-weight:800;color:#0E6B79;letter-spacing:.06em;margin-bottom:26px;}
+  #boot-splash .bs-tag{font-size:12px;font-weight:800;color:#5C4033;letter-spacing:.06em;margin-bottom:26px;}
   #boot-splash .bs-dots{display:flex;gap:7px;}
-  #boot-splash .bs-dots i{width:8px;height:8px;border-radius:50%;background:#54C5D2;display:block;animation:bsPulse 1.1s ease-in-out infinite;}
+  #boot-splash .bs-dots i{width:8px;height:8px;border-radius:50%;background:#D28B62;display:block;animation:bsPulse 1.1s ease-in-out infinite;}
   #boot-splash .bs-dots i:nth-child(2){animation-delay:.16s;}
   #boot-splash .bs-dots i:nth-child(3){animation-delay:.32s;}
   @keyframes bsFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
   @keyframes bsPulse{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
 </style>
 <div id="boot-splash" aria-hidden="true">
-  <div class="bs-logo">🏖️</div>
+  <div class="bs-logo"><svg width="74" height="74" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="bsheart-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5B041"/><stop offset="0.5" stop-color="#F39C12"/><stop offset="1" stop-color="#E67E22"/></linearGradient><linearGradient id="bsheart-red" x1="0.15" y1="0" x2="0.75" y2="1"><stop offset="0" stop-color="#E74C3C"/><stop offset="1" stop-color="#C0392B"/></linearGradient><linearGradient id="bsheart-stem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8B5A2B"/><stop offset="1" stop-color="#5D4037"/></linearGradient></defs><g transform="translate(4 0)"><ellipse cx="56" cy="102.5" rx="32" ry="5.5" fill="#8B5A2B" opacity="0.2"/><path d="M53.5 78 L58.5 78 L59.6 91.5 Q59.9 95.8 56.2 95.9 Q52.8 95.8 53.1 91.8 Z" fill="url(#bsheart-stem)"/><path d="M56 8 C60 16 64 24 67 30 C74 26 82 21 89 19 C87 26 83 35 80 43 C88 44 96 46 103 49 C96 55 87 59 78 61 C71 66 64 72 58.5 80 L53.5 80 C48 72 41 66 34 61 C25 59 16 55 9 49 C16 46 24 44 32 43 C29 35 25 26 23 19 C30 21 38 26 45 30 C48 24 52 16 56 8 Z" fill="url(#bsheart-leaf)"/><g stroke="#8B5A2B" stroke-width="2" stroke-linecap="round" opacity="0.35" fill="none"><path d="M56 74 L56 20"/><path d="M56 58 Q41 52 25 48"/><path d="M56 58 Q71 52 87 48"/><path d="M56 40 Q46 33 35 27"/><path d="M56 40 Q66 33 77 27"/></g><g transform="translate(65.8 59.8) scale(0.92) rotate(10 16 14.4)"><path d="M23.6 0 C20.2 0 17.3 2.7 16 5.6 C14.7 2.7 11.8 0 8.4 0 C3.8 0 0 3.8 0 8.4 C0 17.8 9.5 20.3 16 28.8 C22.1 20.4 32 17.4 32 8.4 C32 3.8 28.2 0 23.6 0 Z" fill="url(#bsheart-red)"/><circle cx="9.2" cy="7.6" r="3" fill="#F7DC6F" opacity="0.9"/></g></g></svg></div>
   <div class="bs-title">감사해U</div>
   <div class="bs-sub">
-    <span class="bs-line" style="background:linear-gradient(90deg,transparent,#B7E4E8)"></span>
+    <span class="bs-line" style="background:linear-gradient(90deg,transparent,#EBD5B7)"></span>
     <span class="bs-org">밀알복지재단</span>
-    <span class="bs-line" style="background:linear-gradient(90deg,#B7E4E8,transparent)"></span>
+    <span class="bs-line" style="background:linear-gradient(90deg,#EBD5B7,transparent)"></span>
   </div>
   <div class="bs-tag">따뜻한 밀알인 되기 프로젝트</div>
   <div class="bs-dots"><i></i><i></i><i></i></div>
@@ -1182,6 +1051,12 @@ const isAdminNameF = full => ADMINS.includes(parseS(full).name);
 
 // ⚡ Twemoji 고정 헬퍼 — 기기 상관없이 동일 렌더. CDN 이미지는 1회 로드 후 캐시(preload로 병렬).
 const TWEMOJI = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/";
+
+// 🍂 가을 로고 — 단풍잎 하트 SVG (기기·OS 상관없이 항상 동일하게 보이는 브랜드 로고)
+const LOGO_SVG = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="mheart-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5B041"/><stop offset="0.5" stop-color="#F39C12"/><stop offset="1" stop-color="#E67E22"/></linearGradient><linearGradient id="mheart-red" x1="0.15" y1="0" x2="0.75" y2="1"><stop offset="0" stop-color="#E74C3C"/><stop offset="1" stop-color="#C0392B"/></linearGradient><linearGradient id="mheart-stem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8B5A2B"/><stop offset="1" stop-color="#5D4037"/></linearGradient></defs><g transform="translate(4 0)"><ellipse cx="56" cy="102.5" rx="32" ry="5.5" fill="#8B5A2B" opacity="0.2"/><path d="M53.5 78 L58.5 78 L59.6 91.5 Q59.9 95.8 56.2 95.9 Q52.8 95.8 53.1 91.8 Z" fill="url(#mheart-stem)"/><path d="M56 8 C60 16 64 24 67 30 C74 26 82 21 89 19 C87 26 83 35 80 43 C88 44 96 46 103 49 C96 55 87 59 78 61 C71 66 64 72 58.5 80 L53.5 80 C48 72 41 66 34 61 C25 59 16 55 9 49 C16 46 24 44 32 43 C29 35 25 26 23 19 C30 21 38 26 45 30 C48 24 52 16 56 8 Z" fill="url(#mheart-leaf)"/><g stroke="#8B5A2B" stroke-width="2" stroke-linecap="round" opacity="0.35" fill="none"><path d="M56 74 L56 20"/><path d="M56 58 Q41 52 25 48"/><path d="M56 58 Q71 52 87 48"/><path d="M56 40 Q46 33 35 27"/><path d="M56 40 Q66 33 77 27"/></g><g transform="translate(65.8 59.8) scale(0.92) rotate(10 16 14.4)"><path d="M23.6 0 C20.2 0 17.3 2.7 16 5.6 C14.7 2.7 11.8 0 8.4 0 C3.8 0 0 3.8 0 8.4 C0 17.8 9.5 20.3 16 28.8 C22.1 20.4 32 17.4 32 8.4 C32 3.8 28.2 0 23.6 0 Z" fill="url(#mheart-red)"/><circle cx="9.2" cy="7.6" r="3" fill="#F7DC6F" opacity="0.9"/></g></g></svg>';
+function logoSvg(px) {
+  return LOGO_SVG.replace("<svg ", '<svg width="' + px + '" height="' + px + '" ');
+}
 function Emo({
   code,
   ch,
@@ -1189,6 +1064,19 @@ function Emo({
   cls = "",
   style = {}
 }) {
+  // 메인 로고 자리(옛 파라솔): PC마다 다른 이모지 대신 항상 동일한 단풍잎 하트 SVG 로고
+  if (code === "1f3d6") return /*#__PURE__*/React.createElement("span", {
+    className: cls,
+    style: {
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      ...style
+    },
+    dangerouslySetInnerHTML: {
+      __html: logoSvg(Math.round(size * 1.15))
+    }
+  });
   return /*#__PURE__*/React.createElement("span", {
     className: cls,
     style: {
@@ -1682,8 +1570,8 @@ function demo(p) {
   };
 }
 function fireConfetti() {
-  const cols = ["#8AD7E0", "#2BA8BC", "#0E6B79", "#DAEFF0", "#58C6D4", "#EAF7F6", "#fff"];
-  const emos = ["💙", "🌊", "✨", "🐚"];
+  const cols = ["#E7C6A8", "#B1603E", "#5C4033", "#F4E6D3", "#D89A73", "#FAF3E8", "#fff"];
+  const emos = ["🧡", "🍁", "✨", "🍂", "🌰", "🌾"];
   for (let i = 0; i < 55; i++) {
     const e = document.createElement("div");
     e.className = "cbit";
@@ -1770,40 +1658,40 @@ function buildNotesHTML({
     const counterpart = isInbox ? m.from : m.to;
     const s = parseS(counterpart);
     const dateStr = fmtDateFull(m.ts);
-    const badge = isInbox ? `<span style="font-size:9.5px;font-weight:800;color:#0E6B79;background:#EAF7F6;border-radius:9999px;padding:2px 8px;letter-spacing:0.04em;flex-shrink:0;">FROM</span>` : `<span style="font-size:9.5px;font-weight:800;color:#475569;background:#F1F5F9;border-radius:9999px;padding:2px 8px;letter-spacing:0.04em;flex-shrink:0;">TO</span>`;
+    const badge = isInbox ? `<span style="font-size:9.5px;font-weight:800;color:#5C4033;background:#FAF3E8;border-radius:9999px;padding:2px 8px;letter-spacing:0.04em;flex-shrink:0;">FROM</span>` : `<span style="font-size:9.5px;font-weight:800;color:#475569;background:#F1F5F9;border-radius:9999px;padding:2px 8px;letter-spacing:0.04em;flex-shrink:0;">TO</span>`;
     return `
       <div class="pdf-card" style="width:100%;box-sizing:border-box;break-inside:avoid;page-break-inside:avoid;-webkit-column-break-inside:avoid;background:#ffffff;border:1px solid #E2E8F0;border-radius:12px;padding:11px 14px;margin-bottom:9px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-          <div style="width:34px;height:34px;border-radius:50%;background:#EAF7F6;color:#0E6B79;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${escapeHtml(s.name.charAt(0))}</div>
+          <div style="width:34px;height:34px;border-radius:50%;background:#FAF3E8;color:#5C4033;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${escapeHtml(s.name.charAt(0))}</div>
           <div style="flex:1;min-width:0;">
             <div style="font-size:14px;font-weight:800;color:#0F172A;">${escapeHtml(s.name)} <span style="font-size:11px;color:#94A3B8;font-weight:500;">${escapeHtml(s.role)}</span></div>
             <div style="font-size:10.5px;color:#94A3B8;font-weight:500;">${escapeHtml(s.dept)}${dateStr ? ` · ${dateStr}` : ""}</div>
           </div>
           ${badge}
         </div>
-        <div style="background:#EDF7F6;border-left:3px solid #2BA8BC;border-radius:7px;padding:9px 12px;">
+        <div style="background:#FAF4EB;border-left:3px solid #B1603E;border-radius:7px;padding:9px 12px;">
           <span style="font-size:12.5px;color:#334155;font-weight:600;line-height:1.6;white-space:pre-wrap;word-break:keep-all;overflow-wrap:break-word;">"${escapeHtml(m.message)}"</span>
         </div>
       </div>`;
   }).join("");
   return `
     <div style="background:#ffffff;padding:0;">
-      <div style="break-inside:avoid;page-break-inside:avoid;background:linear-gradient(135deg,#229AA8 0%,#54C5D2 100%);border-radius:14px;padding:13px 16px;text-align:center;color:#ffffff;margin-bottom:9px;">
+      <div style="break-inside:avoid;page-break-inside:avoid;background:linear-gradient(135deg,#A4492D 0%,#D28B62 100%);border-radius:14px;padding:13px 16px;text-align:center;color:#ffffff;margin-bottom:9px;">
         <div style="display:flex;align-items:center;justify-content:center;gap:7px;">
-          <span style="font-size:22px;line-height:1;">⛱️</span>
+          <span style="display:inline-flex;vertical-align:middle;">${logoSvg(22)}</span>
           <span style="font-size:21px;font-weight:800;letter-spacing:-0.02em;">감사해U</span>
         </div>
         <div style="font-size:11.5px;font-weight:600;opacity:0.92;margin-top:3px;">${period} · ${title}</div>
       </div>
-      <div style="break-inside:avoid;page-break-inside:avoid;background:#EDF7F6;border:1px solid #B7E4E8;border-radius:12px;padding:9px 11px;display:flex;align-items:center;gap:9px;margin-bottom:6px;">
-        <div style="width:36px;height:36px;border-radius:50%;background:#DAEFF0;color:#0E6B79;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${escapeHtml(pm.name.charAt(0))}</div>
+      <div style="break-inside:avoid;page-break-inside:avoid;background:#FAF4EB;border:1px solid #EBD5B7;border-radius:12px;padding:9px 11px;display:flex;align-items:center;gap:9px;margin-bottom:6px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:#F4E6D3;color:#5C4033;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${escapeHtml(pm.name.charAt(0))}</div>
         <div style="flex:1;min-width:0;">
           <div style="font-size:15px;font-weight:800;color:#0F172A;">${escapeHtml(pm.name)} <span style="font-size:11.5px;color:#64748B;font-weight:600;">${escapeHtml(pm.role)}</span></div>
           <div style="font-size:11px;color:#64748B;font-weight:600;">${escapeHtml(pm.dept)}</div>
         </div>
-        <div style="text-align:center;background:#ffffff;border:1px solid #B7E4E8;border-radius:10px;padding:5px 10px;flex-shrink:0;">
-          <div style="font-size:10px;color:#1791A2;font-weight:700;">마음의 온도</div>
-          <div style="font-size:15px;font-weight:800;color:#0E6B79;">${safeTemp.toFixed(1)}°C${medal ? ` ${medal}` : ""}</div>
+        <div style="text-align:center;background:#ffffff;border:1px solid #EBD5B7;border-radius:10px;padding:5px 10px;flex-shrink:0;">
+          <div style="font-size:10px;color:#96552F;font-weight:700;">마음의 온도</div>
+          <div style="font-size:15px;font-weight:800;color:#5C4033;">${safeTemp.toFixed(1)}°C${medal ? ` ${medal}` : ""}</div>
         </div>
       </div>
       <div style="text-align:center;font-size:11px;color:#94A3B8;font-weight:600;margin-bottom:10px;">
@@ -1909,37 +1797,37 @@ function buildDiaryHTML({
   const safeTemp = isNaN(_t) ? 36.5 : _t;
   const medal = medalEmojiFor(safeTemp);
   const sorted = [...entries].sort((a, b) => b.ts - a.ts);
-  const cards = sorted.map(e => {
+  const cards = sorted.map((e, i) => {
     const dateStr = e.date ? String(e.date).replace(/-/g, ".") : fmtDateFull(e.ts);
     return `
       <div class="pdf-card" style="width:100%;box-sizing:border-box;break-inside:avoid;page-break-inside:avoid;-webkit-column-break-inside:avoid;background:#ffffff;border:1px solid #E2E8F0;border-radius:12px;padding:11px 14px;margin-bottom:9px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-          <span style="font-size:16px;line-height:1;">🐚</span>
-          <div style="font-size:12px;color:#0E6B79;font-weight:800;">${escapeHtml(dateStr)}</div>
+          <span style="font-size:16px;line-height:1;">${i % 2 === 0 ? "🍁" : "🍂"}</span>
+          <div style="font-size:12px;color:#5C4033;font-weight:800;">${escapeHtml(dateStr)}</div>
         </div>
-        <div style="background:#EDF7F6;border-left:3px solid #2BA8BC;border-radius:7px;padding:9px 12px;">
+        <div style="background:#FAF4EB;border-left:3px solid #B1603E;border-radius:7px;padding:9px 12px;">
           <span style="font-size:12.5px;color:#334155;font-weight:600;line-height:1.6;white-space:pre-wrap;word-break:keep-all;overflow-wrap:break-word;">${escapeHtml(e.text)}</span>
         </div>
       </div>`;
   }).join("");
   return `
     <div style="background:#ffffff;padding:0;">
-      <div style="break-inside:avoid;page-break-inside:avoid;background:linear-gradient(135deg,#229AA8 0%,#54C5D2 100%);border-radius:14px;padding:13px 16px;text-align:center;color:#ffffff;margin-bottom:9px;">
+      <div style="break-inside:avoid;page-break-inside:avoid;background:linear-gradient(135deg,#A4492D 0%,#D28B62 100%);border-radius:14px;padding:13px 16px;text-align:center;color:#ffffff;margin-bottom:9px;">
         <div style="display:flex;align-items:center;justify-content:center;gap:7px;">
-          <span style="font-size:22px;line-height:1;">⛱️</span>
+          <span style="display:inline-flex;vertical-align:middle;">${logoSvg(22)}</span>
           <span style="font-size:21px;font-weight:800;letter-spacing:-0.02em;">감사해U</span>
         </div>
         <div style="font-size:11.5px;font-weight:600;opacity:0.92;margin-top:3px;">${period} · ${title}</div>
       </div>
-      <div style="break-inside:avoid;page-break-inside:avoid;background:#EDF7F6;border:1px solid #B7E4E8;border-radius:12px;padding:9px 11px;display:flex;align-items:center;gap:9px;margin-bottom:6px;">
-        <div style="width:36px;height:36px;border-radius:50%;background:#DAEFF0;color:#0E6B79;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${escapeHtml(pm.name.charAt(0))}</div>
+      <div style="break-inside:avoid;page-break-inside:avoid;background:#FAF4EB;border:1px solid #EBD5B7;border-radius:12px;padding:9px 11px;display:flex;align-items:center;gap:9px;margin-bottom:6px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:#F4E6D3;color:#5C4033;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${escapeHtml(pm.name.charAt(0))}</div>
         <div style="flex:1;min-width:0;">
           <div style="font-size:15px;font-weight:800;color:#0F172A;">${escapeHtml(pm.name)} <span style="font-size:11.5px;color:#64748B;font-weight:600;">${escapeHtml(pm.role)}</span></div>
           <div style="font-size:11px;color:#64748B;font-weight:600;">${escapeHtml(pm.dept)}</div>
         </div>
-        <div style="text-align:center;background:#ffffff;border:1px solid #B7E4E8;border-radius:10px;padding:5px 10px;flex-shrink:0;">
-          <div style="font-size:10px;color:#1791A2;font-weight:700;">마음의 온도</div>
-          <div style="font-size:15px;font-weight:800;color:#0E6B79;">${safeTemp.toFixed(1)}°C${medal ? ` ${medal}` : ""}</div>
+        <div style="text-align:center;background:#ffffff;border:1px solid #EBD5B7;border-radius:10px;padding:5px 10px;flex-shrink:0;">
+          <div style="font-size:10px;color:#96552F;font-weight:700;">마음의 온도</div>
+          <div style="font-size:15px;font-weight:800;color:#5C4033;">${safeTemp.toFixed(1)}°C${medal ? ` ${medal}` : ""}</div>
         </div>
       </div>
       <div style="text-align:center;font-size:11px;color:#94A3B8;font-weight:600;margin-bottom:10px;">
@@ -2027,14 +1915,14 @@ function Medal({
     width: "8",
     height: "13",
     rx: "1.5",
-    fill: "#2BA8BC"
+    fill: "#B1603E"
   }), /*#__PURE__*/React.createElement("rect", {
     x: "12.5",
     y: "0",
     width: "5",
     height: "13",
     rx: "1",
-    fill: "#58C6D4"
+    fill: "#D89A73"
   }), /*#__PURE__*/React.createElement("circle", {
     cx: "15",
     cy: "21",
@@ -2134,7 +2022,7 @@ function AppFooter() {
   return /*#__PURE__*/React.createElement("p", {
     className: "text-center pt-6 pb-5 text-[11px] font-bold tracking-wide",
     style: {
-      color: "#0C4A52"
+      color: "#3B2A20"
     }
   }, "밀알복지재단 교육문화팀");
 }
@@ -2180,13 +2068,13 @@ function Thermometer({
     y2: "0"
   }, /*#__PURE__*/React.createElement("stop", {
     offset: "0%",
-    stopColor: "#2FA1B0"
+    stopColor: "#A25638"
   }), /*#__PURE__*/React.createElement("stop", {
     offset: "45%",
-    stopColor: "#54C5D2"
+    stopColor: "#D28B62"
   }), /*#__PURE__*/React.createElement("stop", {
     offset: "100%",
-    stopColor: "#8BDAE3"
+    stopColor: "#EBCDB2"
   })), /*#__PURE__*/React.createElement("linearGradient", {
     id: "tube",
     x1: "0",
@@ -2253,14 +2141,14 @@ function Thermometer({
     y1: yAt(60),
     x2: "83",
     y2: yAt(60),
-    stroke: "#1791A2",
+    stroke: "#96552F",
     strokeWidth: "1.8"
   }), /*#__PURE__*/React.createElement("text", {
     x: "86",
     y: yAt(60) + 4,
     fontSize: "8.5",
     fontWeight: "800",
-    fill: "#0E6B79"
+    fill: "#5C4033"
   }, "60°C"), /*#__PURE__*/React.createElement("text", {
     x: "111",
     y: yAt(60) + 5,
@@ -2270,14 +2158,14 @@ function Thermometer({
     y1: yAt(80),
     x2: "83",
     y2: yAt(80),
-    stroke: "#1791A2",
+    stroke: "#96552F",
     strokeWidth: "1.8"
   }), /*#__PURE__*/React.createElement("text", {
     x: "86",
     y: yAt(80) + 4,
     fontSize: "8.5",
     fontWeight: "800",
-    fill: "#0E6B79"
+    fill: "#5C4033"
   }, "80°C"), /*#__PURE__*/React.createElement("text", {
     x: "111",
     y: yAt(80) + 5,
@@ -2287,14 +2175,14 @@ function Thermometer({
     y1: yAt(100),
     x2: "83",
     y2: yAt(100),
-    stroke: "#1791A2",
+    stroke: "#96552F",
     strokeWidth: "1.8"
   }), /*#__PURE__*/React.createElement("text", {
     x: "86",
     y: yAt(100) + 4,
     fontSize: "8.5",
     fontWeight: "800",
-    fill: "#0E6B79"
+    fill: "#5C4033"
   }, "100°C"), /*#__PURE__*/React.createElement("text", {
     x: "111",
     y: yAt(100) + 5,
@@ -2342,14 +2230,14 @@ function LoadingScreen({
       key: i,
       className: "flex items-center gap-3 px-3.5 py-2.5 rounded-2xl transition-all duration-300",
       style: {
-        background: done || active ? 'rgba(43,168,188,0.07)' : 'transparent',
+        background: done || active ? 'rgba(177,96,62,0.07)' : 'transparent',
         opacity: i > step ? 0.25 : 1,
         transform: active ? 'scale(1.02)' : 'scale(1)'
       }
     }, /*#__PURE__*/React.createElement("span", {
       className: "w-5 text-center text-base flex-shrink-0"
     }, done ? "✅" : s.icon), /*#__PURE__*/React.createElement("span", {
-      className: `text-sm flex-1 track-tight ${active ? "font-extrabold text-sky-700" : "font-medium text-slate-500"}`
+      className: `text-sm flex-1 track-tight ${active ? "font-extrabold text-[#9A4B2E]" : "font-medium text-slate-500"}`
     }, s.label), active && /*#__PURE__*/React.createElement("div", {
       className: "sp sp-g flex-shrink-0",
       style: {
@@ -2367,11 +2255,11 @@ function LoadingScreen({
     className: "h-full rounded-full",
     style: {
       width: `${pct}%`,
-      background: "linear-gradient(90deg,#54C5D2,#31B2C2)",
+      background: "linear-gradient(90deg,#D28B62,#BC5B33)",
       transition: "width 0.35s ease"
     }
   })), /*#__PURE__*/React.createElement("p", {
-    className: "text-[10px] font-extrabold text-sky-600 tabular tracking-widest"
+    className: "text-[10px] font-extrabold text-[#BC5B33] tabular tracking-widest"
   }, pct, "%")));
 }
 function PinInput({
@@ -2401,7 +2289,7 @@ function PinInput({
     },
     placeholder: "비밀번호 4자리 입력",
     style: {
-      caretColor: "#2BA8BC",
+      caretColor: "#B1603E",
       paddingRight: "48px"
     },
     className: "pin-input ipt w-full px-4 py-3.5 text-slate-900 text-left text-xl font-extrabold tracking-[0.3em]"
@@ -2454,12 +2342,12 @@ function PersonItem({
   return /*#__PURE__*/React.createElement("button", {
     onMouseDown: e => e.preventDefault(),
     onClick: () => onSelect(person._key),
-    className: "w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-sky-50/60 border-b border-slate-50 last:border-0 transition-colors duration-150"
+    className: "w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-[#FAF3E8]/60 border-b border-slate-50 last:border-0 transition-colors duration-150"
   }, /*#__PURE__*/React.createElement("div", {
     className: "w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-xs flex-shrink-0",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      color: "#0E6B79"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      color: "#5C4033"
     }
   }, person.name.charAt(0)), /*#__PURE__*/React.createElement("div", {
     className: "min-w-0 flex-1"
@@ -2663,7 +2551,7 @@ function LoginScreen({
       opacity: 0.5,
       animation: "floatA 4s 0.2s ease-in-out infinite"
     }
-  }, "🌊"), /*#__PURE__*/React.createElement("span", {
+  }, "🍁"), /*#__PURE__*/React.createElement("span", {
     style: {
       position: "absolute",
       right: "10px",
@@ -2681,7 +2569,7 @@ function LoginScreen({
       opacity: 0.45,
       animation: "floatB 4.5s 0.5s ease-in-out infinite"
     }
-  }, "🌴"), /*#__PURE__*/React.createElement("span", {
+  }, "🍂"), /*#__PURE__*/React.createElement("span", {
     style: {
       position: "absolute",
       right: "18px",
@@ -2690,7 +2578,7 @@ function LoginScreen({
       opacity: 0.42,
       animation: "floatA 5s 0.8s ease-in-out infinite"
     }
-  }, "🐚"), /*#__PURE__*/React.createElement("div", {
+  }, "🌰"), /*#__PURE__*/React.createElement("div", {
     style: {
       position: "relative",
       display: "inline-block",
@@ -2701,7 +2589,7 @@ function LoginScreen({
       position: "absolute",
       inset: "-20px",
       borderRadius: "50%",
-      background: "radial-gradient(circle,rgba(84,197,210,0.36),transparent 70%)",
+      background: "radial-gradient(circle,rgba(216,154,115,0.36),transparent 70%)",
       filter: "blur(14px)"
     }
   }), /*#__PURE__*/React.createElement(Emo, {
@@ -2711,7 +2599,7 @@ function LoginScreen({
     cls: "wiggle",
     style: {
       position: "relative",
-      filter: "drop-shadow(0 6px 12px rgba(14,107,121,0.22))"
+      filter: "drop-shadow(0 6px 12px rgba(92,64,51,0.22))"
     }
   })), /*#__PURE__*/React.createElement("h1", {
     className: "logo-font",
@@ -2719,10 +2607,10 @@ function LoginScreen({
       fontSize: "56px",
       lineHeight: 1,
       marginBottom: "12px",
-      background: "linear-gradient(135deg,#064E3B 0%,#047857 40%,#10B981 100%)",
+      background: "linear-gradient(135deg,#3B2A20 0%,#8B4F38 40%,#A4492D 100%)",
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent",
-      filter: "drop-shadow(0 2px 10px rgba(16,185,129,0.18))"
+      filter: "drop-shadow(0 2px 10px rgba(164,73,45,0.18))"
     }
   }, "감사해U"), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2736,7 +2624,7 @@ function LoginScreen({
     style: {
       width: "32px",
       height: "1px",
-      background: "linear-gradient(90deg,transparent,#B7E4E8)"
+      background: "linear-gradient(90deg,transparent,#EBD5B7)"
     }
   }), /*#__PURE__*/React.createElement("span", {
     style: {
@@ -2750,13 +2638,13 @@ function LoginScreen({
     style: {
       width: "32px",
       height: "1px",
-      background: "linear-gradient(90deg,#B7E4E8,transparent)"
+      background: "linear-gradient(90deg,#EBD5B7,transparent)"
     }
   })), /*#__PURE__*/React.createElement("p", {
     style: {
       fontSize: "12px",
       fontWeight: 800,
-      color: "#0E6B79",
+      color: "#5C4033",
       letterSpacing: "0.06em"
     }
   }, "따뜻한 밀알인 되기 프로젝트")), /*#__PURE__*/React.createElement("div", {
@@ -2828,17 +2716,17 @@ function LoginScreen({
     className: "popIn"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: reset,
-    className: "text-xs font-bold text-sky-700 hover:text-sky-900 mb-5 btn track-tight"
+    className: "text-xs font-bold text-[#9A4B2E] hover:text-[#5C4033] mb-5 btn track-tight"
   }, "← 이름 다시 선택"), /*#__PURE__*/React.createElement("div", {
     className: "rounded-2xl p-4 mb-5 text-center",
     style: {
-      background: "linear-gradient(180deg,#EAF7F6,#EDF7F6)",
-      border: "1px solid rgba(43,168,188,0.15)"
+      background: "linear-gradient(180deg,#FAF3E8,#FAF4EB)",
+      border: "1px solid rgba(177,96,62,0.15)"
     }
   }, /*#__PURE__*/React.createElement("p", {
-    className: "font-extrabold text-sky-900 text-sm track-tight"
-  }, "처음 오셨군요! 환영해요 ⛱️"), /*#__PURE__*/React.createElement("p", {
-    className: "text-xs text-sky-700 mt-1 font-medium"
+    className: "font-extrabold text-[#5C4033] text-sm track-tight"
+  }, "처음 오셨군요! 환영해요 🍁"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-[#9A4B2E] mt-1 font-medium"
   }, "앞으로 사용할 비밀번호 4자리를 설정해주세요")), /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] font-extrabold text-slate-600 mb-2 tracking-widest uppercase"
   }, "비밀번호 (숫자 4자리)"), /*#__PURE__*/React.createElement(PinInput, {
@@ -2862,7 +2750,7 @@ function LoginScreen({
     className: "popIn"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: reset,
-    className: "text-xs font-bold text-sky-700 hover:text-sky-900 mb-5 btn track-tight"
+    className: "text-xs font-bold text-[#9A4B2E] hover:text-[#5C4033] mb-5 btn track-tight"
   }, "← 이름 다시 선택"), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3 rounded-2xl p-4 mb-5",
     style: {
@@ -2872,8 +2760,8 @@ function LoginScreen({
   }, /*#__PURE__*/React.createElement("div", {
     className: "w-12 h-12 rounded-full flex items-center justify-center font-extrabold text-lg flex-shrink-0",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      color: "#0E6B79"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      color: "#5C4033"
     }
   }, sp.name.charAt(0)), /*#__PURE__*/React.createElement("div", {
     className: "min-w-0"
@@ -2900,11 +2788,11 @@ function LoginScreen({
   }), loading ? "확인 중..." : "로그인"))), /*#__PURE__*/React.createElement("p", {
     className: "text-center mt-5 text-[12px] leading-relaxed font-bold",
     style: {
-      color: "#0C4A52"
+      color: "#3B2A20"
     }
   }, "비밀번호를 잊으셨다면", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
     style: {
-      color: "#0A3D45",
+      color: "#2A1E18",
       fontWeight: 800
     }
   }, "교육문화팀(3660)"), "으로 문의해 주세요"), /*#__PURE__*/React.createElement(AppFooter, null)));
@@ -3172,12 +3060,12 @@ function Dashboard({
     size: 28,
     cls: "wiggle",
     style: {
-      filter: "drop-shadow(0 2px 6px rgba(14,107,121,0.22))"
+      filter: "drop-shadow(0 2px 6px rgba(92,64,51,0.22))"
     }
   }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", {
     className: "logo-font text-[24px] leading-none track-tighter",
     style: {
-      background: "linear-gradient(135deg,#064E3B,#10B981)",
+      background: "linear-gradient(135deg,#3B2A20,#A4492D)",
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent"
     }
@@ -3187,10 +3075,10 @@ function Dashboard({
     className: "flex items-center gap-2"
   }, isAdmin && /*#__PURE__*/React.createElement("button", {
     onClick: onOpenAdmin,
-    className: "text-xs font-bold text-sky-700 px-3 py-2 rounded-full btn track-tight",
+    className: "text-xs font-bold text-[#9A4B2E] px-3 py-2 rounded-full btn track-tight",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      border: "1px solid rgba(43,168,188,0.14)"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      border: "1px solid rgba(177,96,62,0.14)"
     }
   }, "⚙️ 관리자"), /*#__PURE__*/React.createElement("button", {
     onClick: onLogout,
@@ -3210,8 +3098,8 @@ function Dashboard({
   }, /*#__PURE__*/React.createElement("div", {
     className: "w-12 h-12 rounded-full flex items-center justify-center font-extrabold text-lg flex-shrink-0",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      color: "#0E6B79"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      color: "#5C4033"
     }
   }, pm.name.charAt(0)), /*#__PURE__*/React.createElement("div", {
     className: "min-w-0 flex-1"
@@ -3219,13 +3107,13 @@ function Dashboard({
     className: "font-extrabold text-slate-900 text-sm track-tight leading-snug"
   }, /*#__PURE__*/React.createElement("span", {
     style: {
-      background: "linear-gradient(135deg,#1791A2,#2BA8BC)",
+      background: "linear-gradient(135deg,#96552F,#B1603E)",
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent"
     }
   }, pm.name), " ", pm.role, "님, 안녕하세요"), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-slate-400 mt-1 font-medium"
-  }, pm.dept, " · 오늘도 따뜻한 하루 되세요 💙")), temp >= 60 && /*#__PURE__*/React.createElement("div", {
+  }, pm.dept, " · 오늘도 따뜻한 하루 되세요 🧡")), temp >= 60 && /*#__PURE__*/React.createElement("div", {
     className: "flex-shrink-0 flex flex-col items-center justify-center",
     style: {
       animation: "badgeIn .5s cubic-bezier(.34,1.56,.64,1) .3s both"
@@ -3252,13 +3140,13 @@ function Dashboard({
     style: {
       fontSize: "68px",
       lineHeight: 1,
-      background: "linear-gradient(160deg,#0C4A52,#0E6B79,#2BA8BC)",
+      background: "linear-gradient(160deg,#3B2A20,#5C4033,#B1603E)",
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent",
       letterSpacing: "-0.05em"
     }
   }, temp.toFixed(1)), /*#__PURE__*/React.createElement("span", {
-    className: "text-2xl fw800 text-sky-600 ml-0.5"
+    className: "text-2xl fw800 text-[#BC5B33] ml-0.5"
   }, "°C")), /*#__PURE__*/React.createElement("div", {
     className: "flex justify-center"
   }, /*#__PURE__*/React.createElement(Thermometer, {
@@ -3268,8 +3156,8 @@ function Dashboard({
   }, /*#__PURE__*/React.createElement("div", {
     className: `inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-extrabold track-tight ${ri.done ? "text-white" : "chip-g"}`,
     style: ri.done ? {
-      background: "linear-gradient(135deg,#229AA8,#54C5D2)",
-      boxShadow: "0 4px 14px rgba(43,168,188,0.18),inset 0 1px 0 rgba(255,255,255,0.18)"
+      background: "linear-gradient(135deg,#A4492D,#D28B62)",
+      boxShadow: "0 4px 14px rgba(177,96,62,0.18),inset 0 1px 0 rgba(255,255,255,0.18)"
     } : {}
   }, /*#__PURE__*/React.createElement("span", null, ri.icon), /*#__PURE__*/React.createElement("span", null, ri.text))), /*#__PURE__*/React.createElement("div", {
     className: "mt-5 grid grid-cols-3 gap-2"
@@ -3283,8 +3171,8 @@ function Dashboard({
       key: t,
       className: `rounded-2xl p-3 text-center transition-all duration-300 ${done ? "text-white" : "text-slate-600"}`,
       style: done ? {
-        background: "linear-gradient(135deg,#229AA8,#54C5D2)",
-        boxShadow: "0 4px 14px rgba(43,168,188,0.14),inset 0 1px 0 rgba(255,255,255,0.15)"
+        background: "linear-gradient(135deg,#A4492D,#D28B62)",
+        boxShadow: "0 4px 14px rgba(177,96,62,0.14),inset 0 1px 0 rgba(255,255,255,0.15)"
       } : {
         background: "#F8FAFC",
         border: "1px solid var(--line-soft)"
@@ -3318,32 +3206,32 @@ function Dashboard({
     "aria-label": "감사일기 남기기",
     className: "w-full px-4 py-4 rounded-[20px] btn track-tight flex items-center gap-3",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      border: "1.5px solid rgba(43,168,188,0.45)",
-      boxShadow: "0 2px 4px rgba(43,168,188,0.10),0 8px 20px rgba(43,168,188,0.16)"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      border: "1.5px solid rgba(177,96,62,0.45)",
+      boxShadow: "0 2px 4px rgba(177,96,62,0.10),0 8px 20px rgba(177,96,62,0.16)"
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "text-2xl flex-shrink-0 bounceY",
     style: {
       animationDelay: "0.6s"
     }
-  }, "🐚"), /*#__PURE__*/React.createElement("div", {
+  }, "🍁"), /*#__PURE__*/React.createElement("div", {
     className: "flex-1 min-w-0 text-left leading-tight"
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-sm font-extrabold",
     style: {
-      color: "#0C4A52"
+      color: "#3B2A20"
     }
   }, "감사일기 남기기"), /*#__PURE__*/React.createElement("div", {
     className: "text-[10.5px] font-semibold mt-0.5",
     style: {
-      color: "#1791A2"
+      color: "#96552F"
     }
   }, "이번 달 감사일기 ", diaryStats.monthCount, "번 · 연속 ", diaryStats.streak, "일")), /*#__PURE__*/React.createElement("svg", {
     width: "16",
     height: "16",
     fill: "none",
-    stroke: "#2BA8BC",
+    stroke: "#B1603E",
     strokeWidth: "2.5",
     viewBox: "0 0 24 24",
     className: "flex-shrink-0"
@@ -3366,7 +3254,7 @@ function Dashboard({
     style: {
       background: "rgba(0,0,0,0.12)"
     }
-  }, "마음껏 전해보세요 💙")), /*#__PURE__*/React.createElement("button", {
+  }, "마음껏 전해보세요 🧡")), /*#__PURE__*/React.createElement("button", {
     onClick: handleOpenInbox,
     className: `py-4 rounded-[22px] text-white font-extrabold btn relative track-tight btn-g ${shake ? "btn-shake" : ""}`
   }, /*#__PURE__*/React.createElement("div", {
@@ -3382,9 +3270,9 @@ function Dashboard({
       background: "rgba(0,0,0,0.12)"
     }
   }, unreadCount > 0 ? `새 쪽지 ${unreadCount}개` : `받은 ${inbox.length} · 보낸 ${sent.length}`), unreadCount > 0 && /*#__PURE__*/React.createElement("div", {
-    className: "absolute top-2.5 right-2.5 min-w-[20px] h-5 px-1 rounded-full bg-white text-sky-700 font-extrabold text-xs flex items-center justify-center countPop",
+    className: "absolute top-2.5 right-2.5 min-w-[20px] h-5 px-1 rounded-full bg-white text-[#9A4B2E] font-extrabold text-xs flex items-center justify-center countPop",
     style: {
-      boxShadow: "0 2px 6px rgba(14,91,102,0.25)"
+      boxShadow: "0 2px 6px rgba(78,56,43,0.25)"
     }
   }, unreadCount))), /*#__PURE__*/React.createElement("div", {
     className: "rule-card slideUp",
@@ -3403,11 +3291,11 @@ function Dashboard({
     className: "rule-line"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ico"
-  }, "🐚"), /*#__PURE__*/React.createElement("span", null, "감사일기를 남기면 1일 1°C씩 상승 가능합니다")), /*#__PURE__*/React.createElement("div", {
+  }, "🌾"), /*#__PURE__*/React.createElement("span", null, "감사일기를 남기면 1일 1°C씩 상승 가능합니다")), /*#__PURE__*/React.createElement("div", {
     className: "rule-line"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ico"
-  }, "💙"), /*#__PURE__*/React.createElement("span", null, "같은 분께 중복으로 보내도 서로 하루에 1°C만 올라요")), /*#__PURE__*/React.createElement("div", {
+  }, "🧡"), /*#__PURE__*/React.createElement("span", null, "같은 분께 중복으로 보내도 서로 하루에 1°C만 올라요")), /*#__PURE__*/React.createElement("div", {
     className: "rule-line"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ico"
@@ -3482,8 +3370,8 @@ function ReplyQuote({
   }, /*#__PURE__*/React.createElement("div", {
     className: "rounded-2xl p-4",
     style: {
-      background: "linear-gradient(160deg,rgba(234,247,246,0.95),rgba(218,239,240,0.82))",
-      border: "1px solid rgba(43,168,188,0.22)",
+      background: "linear-gradient(160deg,rgba(251,240,220,0.95),rgba(249,228,196,0.82))",
+      border: "1px solid rgba(177,96,62,0.22)",
       boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6)"
     }
   }, /*#__PURE__*/React.createElement("div", {
@@ -3493,12 +3381,12 @@ function ReplyQuote({
   }, "💬"), /*#__PURE__*/React.createElement("span", {
     className: "text-[12px] font-extrabold track-tight",
     style: {
-      color: "#0E6B79"
+      color: "#5C4033"
     }
   }, s.name, "님이 보낸 쪽지"), /*#__PURE__*/React.createElement("span", {
     className: "text-[10px] font-semibold ml-auto tabular",
     style: {
-      color: "#1791A2"
+      color: "#96552F"
     }
   }, ds)), note.message ? /*#__PURE__*/React.createElement("p", {
     className: "text-[13px] font-semibold leading-relaxed whitespace-pre-wrap track-tight",
@@ -3508,13 +3396,13 @@ function ReplyQuote({
   }, "\"", note.message, "\"") : /*#__PURE__*/React.createElement("p", {
     className: "text-[13px] font-semibold leading-relaxed track-tight",
     style: {
-      color: "#1791A2"
+      color: "#96552F"
     }
-  }, "🌊 따뜻한 감사의 마음을 보냈어요"), /*#__PURE__*/React.createElement("div", {
+  }, "🍁 따뜻한 감사의 마음을 보냈어요"), /*#__PURE__*/React.createElement("div", {
     className: "mt-2.5 pt-2 text-[11px] font-bold track-tight",
     style: {
-      borderTop: "1px dashed rgba(43,168,188,0.25)",
-      color: "#1791A2"
+      borderTop: "1px dashed rgba(177,96,62,0.25)",
+      color: "#96552F"
     }
   }, "↩︎ 이 쪽지에 답장해요")), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -3524,9 +3412,9 @@ function ReplyQuote({
       width: "14px",
       height: "14px",
       transform: "rotate(45deg)",
-      background: "rgba(218,239,240,0.9)",
-      borderRight: "1px solid rgba(43,168,188,0.22)",
-      borderBottom: "1px solid rgba(43,168,188,0.22)"
+      background: "rgba(249,228,196,0.9)",
+      borderRight: "1px solid rgba(177,96,62,0.22)",
+      borderBottom: "1px solid rgba(177,96,62,0.22)"
     }
   }));
 }
@@ -3661,8 +3549,8 @@ function ComposeModal({
   }, /*#__PURE__*/React.createElement("div", {
     className: "w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-xs flex-shrink-0",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      color: "#0E6B79"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      color: "#5C4033"
     }
   }, rp ? rp.name.charAt(0) : ""), /*#__PURE__*/React.createElement("div", {
     className: "min-w-0 text-left flex-1"
@@ -3675,21 +3563,21 @@ function ComposeModal({
   }, rp ? rp.dept : "")), /*#__PURE__*/React.createElement("span", {
     className: "text-[10px] font-extrabold rounded-full px-2 py-0.5 flex-shrink-0 tracking-wider",
     style: {
-      background: "#EAF7F6",
-      color: "#0E6B79"
+      background: "#FAF3E8",
+      color: "#5C4033"
     }
   }, "답장")) : /*#__PURE__*/React.createElement("div", {
     className: "relative"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: () => setROpen(o => !o),
-    className: "ipt w-full px-4 py-3.5 flex items-center justify-between text-sm btn hover:border-sky-300/60"
+    className: "ipt w-full px-4 py-3.5 flex items-center justify-between text-sm btn hover:border-[#E7C6A8]/60"
   }, rp ? /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2.5 min-w-0"
   }, /*#__PURE__*/React.createElement("div", {
     className: "w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-xs flex-shrink-0",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      color: "#0E6B79"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      color: "#5C4033"
     }
   }, rp.name.charAt(0)), /*#__PURE__*/React.createElement("div", {
     className: "min-w-0 text-left"
@@ -3775,9 +3663,9 @@ function ComposeModal({
     }, t.text), /*#__PURE__*/React.createElement("div", {
       className: `w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-300`,
       style: s ? {
-        background: "linear-gradient(135deg,#54C5D2,#31B2C2)",
-        borderColor: "#1791A2",
-        boxShadow: "0 2px 6px rgba(43,168,188,0.16)"
+        background: "linear-gradient(135deg,#554036,#3C2C24)",
+        borderColor: "#96552F",
+        boxShadow: "0 2px 6px rgba(177,96,62,0.16)"
       } : {
         borderColor: "#CBD5E1",
         background: "#fff"
@@ -3808,7 +3696,7 @@ function ComposeModal({
     onClick: send,
     disabled: sending,
     className: "w-full py-4 rounded-2xl btn btn-g text-sm disabled:opacity-60 track-tight"
-  }, "감사 전하기 💙"))), success && /*#__PURE__*/React.createElement(SuccessModal, {
+  }, "감사 전하기 🧡"))), success && /*#__PURE__*/React.createElement(SuccessModal, {
     oldTemp: success.oldTemp,
     newTemp: success.newTemp,
     rose: success.rose,
@@ -3860,21 +3748,21 @@ function SuccessModal({
     }, /*#__PURE__*/React.createElement("div", {
       className: "absolute inset-x-0 top-0 bottom-3 bg-white rounded-full",
       style: {
-        border: "1px solid rgba(43,168,188,0.14)"
+        border: "1px solid rgba(177,96,62,0.14)"
       }
     }), /*#__PURE__*/React.createElement("div", {
       className: "absolute inset-x-1 bottom-3 rounded-full",
       style: {
         height: `${r * 48 + 4}px`,
-        background: "linear-gradient(to top,#2FA1B0,#54C5D2,#8BDAE3)",
+        background: "linear-gradient(to top,#A25638,#D28B62,#EBCDB2)",
         transition: "none"
       }
     }), /*#__PURE__*/React.createElement("div", {
       className: "absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full",
       style: {
-        background: "linear-gradient(135deg,#229AA8,#54C5D2)",
-        boxShadow: "0 2px 6px rgba(14,91,102,0.16)",
-        border: "1px solid rgba(43,168,188,0.5)"
+        background: "linear-gradient(135deg,#A4492D,#D28B62)",
+        boxShadow: "0 2px 6px rgba(78,56,43,0.16)",
+        border: "1px solid rgba(177,96,62,0.5)"
       }
     })), /*#__PURE__*/React.createElement("div", {
       className: "text-left"
@@ -3885,20 +3773,20 @@ function SuccessModal({
       style: {
         fontSize: "44px",
         lineHeight: 1,
-        background: "linear-gradient(160deg,#0C4A52,#1791A2)",
+        background: "linear-gradient(160deg,#3B2A20,#96552F)",
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
         letterSpacing: "-0.04em"
       }
     }, disp.toFixed(1)), /*#__PURE__*/React.createElement("span", {
-      className: "text-xl fw800 text-sky-600"
+      className: "text-xl fw800 text-[#BC5B33]"
     }, "°C")), /*#__PURE__*/React.createElement("div", {
       className: "text-[11px] text-slate-400 tabular mt-0.5 font-semibold"
     }, "이전 ", oldTemp.toFixed(1), "°C"))), /*#__PURE__*/React.createElement("div", {
       className: "inline-flex items-center gap-1.5 text-white text-xs font-extrabold px-3.5 py-1.5 rounded-full track-tight",
       style: {
-        background: "linear-gradient(135deg,#229AA8,#54C5D2)",
-        boxShadow: "0 3px 10px rgba(43,168,188,0.16)",
+        background: "linear-gradient(135deg,#A4492D,#D28B62)",
+        boxShadow: "0 3px 10px rgba(177,96,62,0.16)",
         animation: "badgeIn .5s cubic-bezier(.34,1.56,.64,1) .9s both"
       }
     }, /*#__PURE__*/React.createElement("span", {
@@ -3917,17 +3805,17 @@ function SuccessModal({
       className: "text-base font-extrabold text-slate-800 track-tight leading-snug mb-1"
     }, "이미 최고 온도 100°C예요!"), /*#__PURE__*/React.createElement("p", {
       className: "text-sm font-semibold text-slate-600 leading-relaxed track-tight"
-    }, "마음의 온도가 가득 찼어요 💙"));
+    }, "마음의 온도가 가득 찼어요 🧡"));
   } else if (reason === "duplicate_recipient") {
     caseUI = /*#__PURE__*/React.createElement("div", {
       className: "px-2"
     }, /*#__PURE__*/React.createElement("div", {
       className: "text-3xl mb-2"
-    }, "💙"), /*#__PURE__*/React.createElement("p", {
+    }, "🧡"), /*#__PURE__*/React.createElement("p", {
       className: "text-base font-extrabold text-slate-800 track-tight leading-snug mb-1"
     }, "지금은 온도가 오르지 않아요"), /*#__PURE__*/React.createElement("p", {
       className: "text-sm font-semibold text-slate-600 leading-relaxed track-tight"
-    }, "오늘 이미 이분께 감사를 전하셨네요 💙"));
+    }, "오늘 이미 이분께 감사를 전하셨네요 🧡"));
   } else {
     caseUI = /*#__PURE__*/React.createElement("div", {
       className: "px-2"
@@ -3951,13 +3839,13 @@ function SuccessModal({
   }, /*#__PURE__*/React.createElement("div", {
     className: "w-14 h-14 mx-auto mb-3 rounded-full flex items-center justify-center pulseRing",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)"
     }
   }, /*#__PURE__*/React.createElement("svg", {
     width: "28",
     height: "28",
     fill: "none",
-    stroke: "#0E6B79",
+    stroke: "#5C4033",
     strokeWidth: "3.2",
     viewBox: "0 0 24 24"
   }, /*#__PURE__*/React.createElement("path", {
@@ -3967,8 +3855,8 @@ function SuccessModal({
   }, "감사한 마음을 전했어요"), /*#__PURE__*/React.createElement("div", {
     className: "rounded-2xl p-5 mb-4",
     style: {
-      background: "linear-gradient(180deg,#EAF7F6,#EDF7F6)",
-      border: "1px solid rgba(43,168,188,0.18)"
+      background: "linear-gradient(180deg,#FAF3E8,#FAF4EB)",
+      border: "1px solid rgba(177,96,62,0.18)"
     }
   }, caseUI), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -3976,13 +3864,13 @@ function SuccessModal({
     }
   }, rose ? /*#__PURE__*/React.createElement("p", {
     className: "text-sm font-semibold text-slate-600 leading-relaxed track-tight"
-  }, "당신의 소중한 감사 덕에", /*#__PURE__*/React.createElement("br", null), "상대의 마음의 온도도 1도 올라갔습니다 💙") : reason === "temp_maxed" ? /*#__PURE__*/React.createElement("p", {
+  }, "당신의 소중한 감사 덕에", /*#__PURE__*/React.createElement("br", null), "상대의 마음의 온도도 1도 올라갔습니다 🧡") : reason === "temp_maxed" ? /*#__PURE__*/React.createElement("p", {
     className: "text-sm font-semibold text-slate-600 leading-relaxed track-tight"
-  }, "온도는 더 오르지 않지만", /*#__PURE__*/React.createElement("br", null), "당신의 따뜻한 마음은 변함없이 전달되었어요 💙") : reason === "duplicate_recipient" ? /*#__PURE__*/React.createElement("p", {
+  }, "온도는 더 오르지 않지만", /*#__PURE__*/React.createElement("br", null), "당신의 따뜻한 마음은 변함없이 전달되었어요 🧡") : reason === "duplicate_recipient" ? /*#__PURE__*/React.createElement("p", {
     className: "text-sm font-semibold text-slate-600 leading-relaxed track-tight"
-  }, "하지만 당신의 따뜻한 마음은", /*#__PURE__*/React.createElement("br", null), "한 번 더 전달되었어요 ⛱️") : /*#__PURE__*/React.createElement("p", {
+  }, "하지만 당신의 따뜻한 마음은", /*#__PURE__*/React.createElement("br", null), "한 번 더 전달되었어요 🍂") : /*#__PURE__*/React.createElement("p", {
     className: "text-sm font-semibold text-slate-600 leading-relaxed track-tight"
-  }, "하지만 당신의 따뜻한 마음은", /*#__PURE__*/React.createElement("br", null), "변함없이 전달되었어요 💙")), milestone > 0 && /*#__PURE__*/React.createElement("div", {
+  }, "하지만 당신의 따뜻한 마음은", /*#__PURE__*/React.createElement("br", null), "변함없이 전달되었어요 🧡")), milestone > 0 && /*#__PURE__*/React.createElement("div", {
     className: "milestone-card"
   }, /*#__PURE__*/React.createElement("span", {
     className: "milestone-icon"
@@ -4057,9 +3945,9 @@ function InboxModal({
     title: writtenCount === 0 ? "직접 작성한 쪽지가 없어요" : "감사 쪽지를 PDF로 저장",
     className: "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full btn text-xs font-extrabold track-tight whitespace-nowrap flex-shrink-0 disabled:opacity-40",
     style: {
-      background: "#54C5D2",
+      background: "#D28B62",
       color: "#fff",
-      boxShadow: "0 1px 3px rgba(43,168,188,0.18)"
+      boxShadow: "0 1px 3px rgba(177,96,62,0.18)"
     }
   }, pdfBusy ? /*#__PURE__*/React.createElement("span", {
     className: "sp",
@@ -4100,11 +3988,11 @@ function InboxModal({
     }
   }, "🖨️ ", /*#__PURE__*/React.createElement("b", {
     style: {
-      color: "#1791A2"
+      color: "#96552F"
     }
   }, "인쇄"), " 화면이 뜨면 ", /*#__PURE__*/React.createElement("b", {
     style: {
-      color: "#1791A2"
+      color: "#96552F"
     }
   }, "[프린터] → [PDF로 저장]"), "을 눌러주세요")), /*#__PURE__*/React.createElement("div", {
     className: "px-5 pt-4"
@@ -4119,7 +4007,7 @@ function InboxModal({
   }, "📥 받은 쪽지", /*#__PURE__*/React.createElement("span", {
     className: "ml-1 tabular text-[11px] font-extrabold",
     style: {
-      color: tab === "inbox" ? "#2BA8BC" : "#94A3B8"
+      color: tab === "inbox" ? "#B1603E" : "#94A3B8"
     }
   }, inbox.length)), /*#__PURE__*/React.createElement("button", {
     onClick: () => setTab("sent"),
@@ -4127,7 +4015,7 @@ function InboxModal({
   }, "📤 보낸 쪽지", /*#__PURE__*/React.createElement("span", {
     className: "ml-1 tabular text-[11px] font-extrabold",
     style: {
-      color: tab === "sent" ? "#2BA8BC" : "#94A3B8"
+      color: tab === "sent" ? "#B1603E" : "#94A3B8"
     }
   }, sent.length)))), /*#__PURE__*/React.createElement("div", {
     className: "flex-1 overflow-y-auto p-5 space-y-3",
@@ -4162,8 +4050,8 @@ function InboxModal({
     }, /*#__PURE__*/React.createElement("div", {
       className: "w-10 h-10 rounded-full flex items-center justify-center font-extrabold flex-shrink-0",
       style: {
-        background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-        color: "#0E6B79"
+        background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+        color: "#5C4033"
       }
     }, s.name.charAt(0)), /*#__PURE__*/React.createElement("div", {
       className: "min-w-0 flex-1"
@@ -4172,8 +4060,8 @@ function InboxModal({
     }, /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] font-extrabold rounded-full px-1.5 py-0.5 tracking-wider",
       style: {
-        background: tab === "inbox" ? "#EAF7F6" : "#F1F5F9",
-        color: tab === "inbox" ? "#0E6B79" : "#475569"
+        background: tab === "inbox" ? "#FAF3E8" : "#F1F5F9",
+        color: tab === "inbox" ? "#5C4033" : "#475569"
       }
     }, tab === "inbox" ? "FROM" : "TO"), /*#__PURE__*/React.createElement("div", {
       className: "font-extrabold text-slate-900 text-sm truncate track-tight"
@@ -4197,8 +4085,8 @@ function InboxModal({
     }, t.text)))), m.message && /*#__PURE__*/React.createElement("div", {
       className: "rounded-xl p-3.5 mt-2",
       style: {
-        background: "linear-gradient(180deg,#EAF7F6,#EDF7F6)",
-        borderLeft: "3px solid #2BA8BC"
+        background: "linear-gradient(180deg,#FAF3E8,#FAF4EB)",
+        borderLeft: "3px solid #B1603E"
       }
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-sm font-semibold text-slate-700 leading-relaxed whitespace-pre-wrap track-tight"
@@ -4206,9 +4094,9 @@ function InboxModal({
       onClick: () => onReply(m),
       className: "w-full mt-3 py-2.5 rounded-xl btn track-tight flex items-center justify-center gap-2 text-[13px] font-extrabold",
       style: {
-        background: "linear-gradient(135deg,#54C5D2,#31B2C2)",
+        background: "linear-gradient(135deg,#554036,#3C2C24)",
         color: "#fff",
-        boxShadow: "0 2px 8px rgba(43,168,188,0.18)"
+        boxShadow: "0 2px 8px rgba(177,96,62,0.18)"
       }
     }, /*#__PURE__*/React.createElement("svg", {
       width: "14",
@@ -4380,7 +4268,7 @@ function DiaryModal({
     className: "flex items-center gap-2.5 min-w-0"
   }, /*#__PURE__*/React.createElement("span", {
     className: "text-lg wiggle flex-shrink-0"
-  }, "🐚"), /*#__PURE__*/React.createElement("h2", {
+  }, "🍁"), /*#__PURE__*/React.createElement("h2", {
     className: "font-extrabold text-slate-900 track-tight flex-shrink-0"
   }, "감사 일기"), /*#__PURE__*/React.createElement("button", {
     onClick: handleExportDiary,
@@ -4388,9 +4276,9 @@ function DiaryModal({
     title: entries.length === 0 ? "저장할 감사일기가 없어요" : "감사일기를 PDF로 저장",
     className: "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full btn text-xs font-extrabold track-tight whitespace-nowrap flex-shrink-0 disabled:opacity-40",
     style: {
-      background: "#54C5D2",
+      background: "#D28B62",
       color: "#fff",
-      boxShadow: "0 1px 3px rgba(43,168,188,0.18)"
+      boxShadow: "0 1px 3px rgba(177,96,62,0.18)"
     }
   }, pdfBusy ? /*#__PURE__*/React.createElement("span", {
     className: "sp",
@@ -4431,11 +4319,11 @@ function DiaryModal({
     }
   }, "🖨️ ", /*#__PURE__*/React.createElement("b", {
     style: {
-      color: "#1791A2"
+      color: "#96552F"
     }
   }, "인쇄"), " 화면이 뜨면 ", /*#__PURE__*/React.createElement("b", {
     style: {
-      color: "#1791A2"
+      color: "#96552F"
     }
   }, "[프린터] → [PDF로 저장]"), "을 눌러주세요")), /*#__PURE__*/React.createElement("div", {
     className: "px-5 pt-3"
@@ -4444,16 +4332,16 @@ function DiaryModal({
   }, /*#__PURE__*/React.createElement("span", {
     className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      color: "#0E6B79"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      color: "#5C4033"
     }
-  }, "🌊 이번 달 감사일기 ", monthCount, "번"), /*#__PURE__*/React.createElement("span", {
+  }, "🍂 이번 달 감사일기 ", monthCount, "번"), /*#__PURE__*/React.createElement("span", {
     className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      color: "#0E6B79"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      color: "#5C4033"
     }
-  }, "🐚 연속 일기 ", streak, "일"))), /*#__PURE__*/React.createElement("div", {
+  }, "🌰 연속 일기 ", streak, "일"))), /*#__PURE__*/React.createElement("div", {
     className: "px-5 pt-3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex gap-1 p-1 rounded-2xl",
@@ -4476,14 +4364,14 @@ function DiaryModal({
   }, /*#__PURE__*/React.createElement("div", {
     className: "rounded-2xl px-4 py-3 text-[13px] font-bold leading-relaxed",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      border: "1px solid rgba(43,168,188,0.2)",
-      color: "#0E6B79"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      border: "1px solid rgba(177,96,62,0.2)",
+      color: "#5C4033"
     }
-  }, "감사 일기를 남겨도 마음의 온도가 1도 올라가요 (1일1도) 🌊"), /*#__PURE__*/React.createElement("div", {
+  }, "감사 일기를 남겨도 마음의 온도가 1도 올라가요 (1일1도) 🍁"), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 text-[12px] font-extrabold",
     style: {
-      color: "#1791A2"
+      color: "#96552F"
     }
   }, /*#__PURE__*/React.createElement("span", null, "📆"), /*#__PURE__*/React.createElement("span", null, fmtKor(tKey))), /*#__PURE__*/React.createElement("textarea", {
     value: text,
@@ -4499,14 +4387,14 @@ function DiaryModal({
     className: "w-full py-4 rounded-2xl btn btn-g text-sm disabled:opacity-50 flex items-center justify-center gap-2 track-tight"
   }, saving ? /*#__PURE__*/React.createElement("span", {
     className: "sp"
-  }) : /*#__PURE__*/React.createElement("span", null, "🐚"), /*#__PURE__*/React.createElement("span", null, saving ? "저장 중..." : "감사 일기 쓰기")), justSaved && /*#__PURE__*/React.createElement("div", {
+  }) : /*#__PURE__*/React.createElement("span", null, "🍂"), /*#__PURE__*/React.createElement("span", null, saving ? "저장 중..." : "감사 일기 쓰기")), justSaved && /*#__PURE__*/React.createElement("div", {
     className: "text-center popIn pt-1"
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-4xl mb-1 bounceY"
-  }, "🌊"), /*#__PURE__*/React.createElement("p", {
+  }, "🍁"), /*#__PURE__*/React.createElement("p", {
     className: "text-sm font-extrabold track-tight",
     style: {
-      color: "#0E6B79"
+      color: "#5C4033"
     }
   }, justSaved.rose ? `감사가 기록됐어요! 온도가 ${justSaved.newTemp.toFixed(1)}°C로 올랐어요` : "감사가 기록됐어요!"), !justSaved.rose && /*#__PURE__*/React.createElement("p", {
     className: "text-[11px] text-slate-400 font-medium mt-0.5"
@@ -4564,28 +4452,28 @@ function DiaryModal({
       className: "rounded-xl flex flex-col items-center justify-center btn",
       style: {
         aspectRatio: "1 / 1",
-        background: isSel ? "linear-gradient(135deg,#54C5D2,#31B2C2)" : has ? "#EAF7F6" : "transparent",
-        border: isToday && !isSel ? "1.5px solid #54C5D2" : "1.5px solid transparent"
+        background: isSel ? "linear-gradient(135deg,#554036,#3C2C24)" : has ? "#FAF3E8" : "transparent",
+        border: isToday && !isSel ? "1.5px solid #D28B62" : "1.5px solid transparent"
       }
     }, /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] font-bold leading-none",
       style: {
-        color: isSel ? "#fff" : has ? "#0E6B79" : "#475569"
+        color: isSel ? "#fff" : has ? "#5C4033" : "#475569"
       }
     }, d), has && /*#__PURE__*/React.createElement("span", {
       className: "leading-none",
       style: {
         fontSize: "20px",
         marginTop: "1px",
-        filter: "drop-shadow(0 1px 2px rgba(43,168,188,0.4))"
+        filter: "drop-shadow(0 1px 2px rgba(177,96,62,0.4))"
       }
-    }, "🐚"));
+    }, d % 2 === 0 ? "🍁" : "🍂"));
   })), /*#__PURE__*/React.createElement("div", {
     className: "mt-4"
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-[12px] font-extrabold mb-2 track-tight",
     style: {
-      color: "#1791A2"
+      color: "#96552F"
     }
   }, fmtKor(selDate)), selEntries.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "rounded-2xl py-6 text-center",
@@ -4595,7 +4483,7 @@ function DiaryModal({
     }
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-2xl mb-1"
-  }, "🏖️"), /*#__PURE__*/React.createElement("p", {
+  }, "🍂"), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-slate-400 font-medium"
   }, "이 날은 감사 일기가 없어요")) : /*#__PURE__*/React.createElement("div", {
     className: "space-y-2"
@@ -4614,14 +4502,14 @@ function DiaryModal({
     className: "w-full mt-4 py-3 rounded-2xl btn track-tight text-[13px] font-extrabold flex items-center justify-center gap-2",
     style: {
       background: "#fff",
-      border: "1px solid rgba(43,168,188,0.25)",
-      color: "#0E6B79"
+      border: "1px solid rgba(177,96,62,0.25)",
+      color: "#5C4033"
     }
   }, showAll ? "접기 ▲" : `감사 일기 전체보기 (${entries.length}) ▼`), showAll && /*#__PURE__*/React.createElement("div", {
     className: "mt-3 space-y-2 popIn"
   }, allSorted.length === 0 ? /*#__PURE__*/React.createElement("p", {
     className: "text-center text-xs text-slate-400 font-medium py-4"
-  }, "아직 일기가 없어요. 첫 감사를 남겨보세요 🐚") : allSorted.map((e, i) => /*#__PURE__*/React.createElement("div", {
+  }, "아직 일기가 없어요. 첫 감사를 남겨보세요 🍂") : allSorted.map((e, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
     className: "rounded-2xl p-3.5",
     style: {
@@ -4632,7 +4520,7 @@ function DiaryModal({
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-[10px] font-extrabold mb-1 tabular",
     style: {
-      color: "#1791A2"
+      color: "#96552F"
     }
   }, fmtKor(e.date)), /*#__PURE__*/React.createElement("p", {
     className: "text-sm font-semibold text-slate-700 leading-relaxed whitespace-pre-wrap track-tight"
@@ -4788,15 +4676,15 @@ function AdminStatsTab({
   const bars = [{
     label: "100°C+",
     count: tb.c100,
-    color: "#0E6B79"
+    color: "#5C4033"
   }, {
     label: "80~99°C",
     count: tb.c80,
-    color: "#2BA8BC"
+    color: "#B1603E"
   }, {
     label: "60~79°C",
     count: tb.c60,
-    color: "#58C6D4"
+    color: "#D89A73"
   }, {
     label: "~59°C",
     count: tb.c0,
@@ -4809,21 +4697,21 @@ function AdminStatsTab({
   }, /*#__PURE__*/React.createElement("div", {
     className: "admin-stat-card text-center"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "text-[10px] font-extrabold text-sky-700 uppercase tracking-wider mb-1"
+    className: "text-[10px] font-extrabold text-[#9A4B2E] uppercase tracking-wider mb-1"
   }, "전체 직원"), /*#__PURE__*/React.createElement("div", {
-    className: "text-xl fw900 text-sky-900 tabular"
+    className: "text-xl fw900 text-[#5C4033] tabular"
   }, stats.totalActive)), /*#__PURE__*/React.createElement("div", {
     className: "admin-stat-card text-center"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "text-[10px] font-extrabold text-sky-700 uppercase tracking-wider mb-1"
+    className: "text-[10px] font-extrabold text-[#9A4B2E] uppercase tracking-wider mb-1"
   }, "누적 쪽지"), /*#__PURE__*/React.createElement("div", {
-    className: "text-xl fw900 text-sky-900 tabular"
+    className: "text-xl fw900 text-[#5C4033] tabular"
   }, stats.totalAll)), /*#__PURE__*/React.createElement("div", {
     className: "admin-stat-card text-center"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "text-[10px] font-extrabold text-sky-700 uppercase tracking-wider mb-1"
+    className: "text-[10px] font-extrabold text-[#9A4B2E] uppercase tracking-wider mb-1"
   }, "참여자"), /*#__PURE__*/React.createElement("div", {
-    className: "text-xl fw900 text-sky-900 tabular"
+    className: "text-xl fw900 text-[#5C4033] tabular"
   }, stats.activeUsers))), /*#__PURE__*/React.createElement("div", {
     className: "admin-card"
   }, /*#__PURE__*/React.createElement("div", {
@@ -4866,25 +4754,25 @@ function AdminStatsTab({
       key: s.full,
       className: "flex items-center gap-2 px-2 py-1.5 rounded-lg",
       style: {
-        background: i === 0 ? "#EAF7F6" : "#F8FAFC"
+        background: i === 0 ? "#FAF3E8" : "#F8FAFC"
       }
     }, /*#__PURE__*/React.createElement("div", {
       className: "text-xs fw900 w-5 text-center",
       style: {
-        color: i === 0 ? "#0E6B79" : "#94A3B8"
+        color: i === 0 ? "#5C4033" : "#94A3B8"
       }
     }, i + 1), /*#__PURE__*/React.createElement("div", {
       className: "text-xs font-bold text-slate-700 flex-1 truncate track-tight"
     }, ps.name, " ", /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] font-medium text-slate-400"
     }, ps.dept)), /*#__PURE__*/React.createElement("div", {
-      className: "text-xs fw900 text-sky-700 tabular"
+      className: "text-xs fw900 text-[#9A4B2E] tabular"
     }, s.count));
   }))), /*#__PURE__*/React.createElement("div", {
     className: "admin-card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-xs font-extrabold text-slate-700 mb-3 track-tight"
-  }, "💙 가장 많이 받은 분"), (stats.topReceivers || []).length === 0 ? /*#__PURE__*/React.createElement("p", {
+  }, "🧡 가장 많이 받은 분"), (stats.topReceivers || []).length === 0 ? /*#__PURE__*/React.createElement("p", {
     className: "text-center text-slate-400 py-3 text-xs font-medium"
   }, "아직 데이터가 없어요") : /*#__PURE__*/React.createElement("div", {
     className: "space-y-1.5"
@@ -4894,19 +4782,19 @@ function AdminStatsTab({
       key: s.full,
       className: "flex items-center gap-2 px-2 py-1.5 rounded-lg",
       style: {
-        background: i === 0 ? "#EAF7F6" : "#F8FAFC"
+        background: i === 0 ? "#FAF3E8" : "#F8FAFC"
       }
     }, /*#__PURE__*/React.createElement("div", {
       className: "text-xs fw900 w-5 text-center",
       style: {
-        color: i === 0 ? "#0E6B79" : "#94A3B8"
+        color: i === 0 ? "#5C4033" : "#94A3B8"
       }
     }, i + 1), /*#__PURE__*/React.createElement("div", {
       className: "text-xs font-bold text-slate-700 flex-1 truncate track-tight"
     }, ps.name, " ", /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] font-medium text-slate-400"
     }, ps.dept)), /*#__PURE__*/React.createElement("div", {
-      className: "text-xs fw900 text-sky-700 tabular"
+      className: "text-xs fw900 text-[#9A4B2E] tabular"
     }, s.count));
   }))), /*#__PURE__*/React.createElement("div", {
     className: "admin-card"
@@ -4928,7 +4816,7 @@ function AdminStatsTab({
       title: `${d.date}: ${d.count}건`,
       style: {
         height: `${h}%`,
-        background: "linear-gradient(to top,#2BA8BC,#58C6D4)",
+        background: "linear-gradient(to top,#B1603E,#D89A73)",
         minHeight: d.count > 0 ? "3px" : "0"
       }
     });
@@ -5051,10 +4939,10 @@ function AdminStaffTab({
   }, showAdd ? "✕ 추가 취소" : "➕ 직원 추가"), showAdd && /*#__PURE__*/React.createElement("div", {
     className: "admin-card space-y-2 popIn",
     style: {
-      border: "1px solid rgba(43,168,188,0.16)"
+      border: "1px solid rgba(177,96,62,0.16)"
     }
   }, /*#__PURE__*/React.createElement("div", {
-    className: "text-xs font-extrabold text-sky-700 track-tight mb-1"
+    className: "text-xs font-extrabold text-[#9A4B2E] track-tight mb-1"
   }, "새 직원 추가"), /*#__PURE__*/React.createElement("input", {
     type: "text",
     value: addDept,
@@ -5108,8 +4996,8 @@ function AdminStaffTab({
   }, /*#__PURE__*/React.createElement("div", {
     className: "w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-xs flex-shrink-0",
     style: {
-      background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-      color: "#0E6B79"
+      background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+      color: "#5C4033"
     }
   }, s.name.charAt(0)), /*#__PURE__*/React.createElement("div", {
     className: "min-w-0 flex-1"
@@ -5160,7 +5048,7 @@ function AdminStaffTab({
     style: {
       fontSize: "10px",
       padding: "5px 8px",
-      background: "linear-gradient(135deg,#54C5D2,#2BA8BC)",
+      background: "linear-gradient(135deg,#96552F,#B1603E)",
       color: "#fff"
     }
   }, "활성")))))), filtered.length === 0 && /*#__PURE__*/React.createElement("p", {
@@ -5333,7 +5221,7 @@ function AdminGiftsTab({
   }, "60°C"), /*#__PURE__*/React.createElement("div", {
     className: "text-lg fw900 tabular",
     style: {
-      color: summary.pending60 > 0 ? "#B45309" : "#2BA8BC"
+      color: summary.pending60 > 0 ? "#B45309" : "#B1603E"
     }
   }, summary.pending60), /*#__PURE__*/React.createElement("div", {
     className: "text-[9px] font-bold text-slate-400 mt-0.5"
@@ -5350,7 +5238,7 @@ function AdminGiftsTab({
   }, "80°C"), /*#__PURE__*/React.createElement("div", {
     className: "text-lg fw900 tabular",
     style: {
-      color: summary.pending80 > 0 ? "#B45309" : "#2BA8BC"
+      color: summary.pending80 > 0 ? "#B45309" : "#B1603E"
     }
   }, summary.pending80), /*#__PURE__*/React.createElement("div", {
     className: "text-[9px] font-bold text-slate-400 mt-0.5"
@@ -5367,7 +5255,7 @@ function AdminGiftsTab({
   }, "100°C"), /*#__PURE__*/React.createElement("div", {
     className: "text-lg fw900 tabular",
     style: {
-      color: summary.pending100 > 0 ? "#92400E" : "#2BA8BC"
+      color: summary.pending100 > 0 ? "#92400E" : "#B1603E"
     }
   }, summary.pending100), /*#__PURE__*/React.createElement("div", {
     className: "text-[9px] font-bold text-slate-400 mt-0.5"
@@ -5398,8 +5286,8 @@ function AdminGiftsTab({
     }, /*#__PURE__*/React.createElement("div", {
       className: "w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-xs flex-shrink-0",
       style: {
-        background: "linear-gradient(135deg,#EAF7F6,#DAEFF0)",
-        color: "#0E6B79"
+        background: "linear-gradient(135deg,#FAF3E8,#F4E6D3)",
+        color: "#5C4033"
       }
     }, s.name.charAt(0)), /*#__PURE__*/React.createElement("div", {
       className: "min-w-0 flex-1"
@@ -5549,11 +5437,11 @@ function AdminOpsTab({
   }, "💡 핵심 규칙 안내"), /*#__PURE__*/React.createElement("ul", {
     className: "text-[11.5px] text-slate-600 space-y-1 leading-relaxed font-medium"
   }, /*#__PURE__*/React.createElement("li", null, "💌 쪽지는 ", /*#__PURE__*/React.createElement("b", {
-    className: "text-sky-700"
+    className: "text-[#9A4B2E]"
   }, "매일 무제한"), " 발송 가능"), /*#__PURE__*/React.createElement("li", null, "🌡️ 본인 온도: 하루 최대 ", /*#__PURE__*/React.createElement("b", {
-    className: "text-sky-700"
-  }, "+3°C")), /*#__PURE__*/React.createElement("li", null, "💙 같은 분께 중복 발송: 둘 사이 ", /*#__PURE__*/React.createElement("b", {
-    className: "text-sky-700"
+    className: "text-[#9A4B2E]"
+  }, "+3°C")), /*#__PURE__*/React.createElement("li", null, "🧡 같은 분께 중복 발송: 둘 사이 ", /*#__PURE__*/React.createElement("b", {
+    className: "text-[#9A4B2E]"
   }, "+1°C"), "만"), /*#__PURE__*/React.createElement("li", null, "🎁 보상: 60/80°C ☕, 100°C 🎁 (1주 내, 디아코니아 연구소)"))));
 }
 
