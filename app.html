@@ -3,9 +3,36 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-<title>밀알복지재단 감사해U — 시설 선택</title>
-<script>/* ⚡ 재방문은 스타일·폰트 로딩 안 기다리고 즉시 앱으로 */
-try{ if(localStorage.getItem("gu3.auth")) location.replace("app.html?v=3.8.4"); }catch(e){}</script>
+<title>밀알복지재단 감사해U</title>
+<script src="assets/config.js?v=3.8.4"></script>
+<script>
+/* ⚡ 자동 로그인 선발사 — 스크립트·폰트 로딩과 서버 왕복(1~2초)을 병렬로 진행 */
+(function(){
+  try{
+    var raw = localStorage.getItem("gu3.auth");
+    /* ⚡ 로그인 화면 선발사 — 시설을 알면 명단(getRoster)을 스크립트 로딩과 병렬로 미리 요청.
+       저장된 로그인이 있어도 함께 쏜다 — 비밀번호가 초기화된 뒤에는 자동 로그인이 실패하고
+       곧바로 로그인 화면이 뜨는데, 그때 명단 왕복을 처음부터 시작하면 2회가 직렬로 늘어난다. */
+    var fac = "";
+    try{ var m = location.search.match(/[?&]fac=([^&]*)/); if(m) fac = decodeURIComponent(m[1].replace(/\+/g," ")); }catch(e){}
+    if(!fac){ try{ fac = JSON.parse(localStorage.getItem("gu3.fac") || "null") || ""; }catch(e){} }
+    if(fac && GU.FACILITIES.indexOf(fac) >= 0) window.__earlyRoster = { fac: fac, promise:
+      fetch(GU.SHEET_URL, { method:"POST", mode:"cors", headers:{ "Content-Type":"text/plain;charset=utf-8" },
+        body: JSON.stringify({ action:"getRoster", fac: fac })
+      }).then(function(r){ return r.json(); }) };
+    if(!raw) return;
+    var a = JSON.parse(decodeURIComponent(atob(raw))); if(!a || !a.uid || !a.pw) return;
+    var hasData = false, rosterVer = 0;
+    /* ⚡ 대형 캐시(수백 KB)를 통째로 파싱하지 않고 작은 마커 키만 읽음 — fetch 발사가 빨라짐 */
+    try{ hasData = Number(localStorage.getItem("gu3.hasData." + a.uid)) === GU.CACHE_SCHEMA; }catch(e){}
+    try{ rosterVer = Number(localStorage.getItem("gu3.roster.ver")) || 0; }catch(e){}
+    window.__earlyLogin = { uid: a.uid, pw: a.pw, promise:
+      fetch(GU.SHEET_URL, { method:"POST", mode:"cors", headers:{ "Content-Type":"text/plain;charset=utf-8" },
+        body: JSON.stringify({ action:"loginAndLoad", uid:a.uid, password:a.pw, needRoster:true, rosterVersion:rosterVer, needData:!hasData })
+      }).then(function(r){ return r.json(); }) };
+  }catch(e){}
+})();
+</script>
 <link rel="manifest" href="manifest.json"/>
 <meta name="theme-color" content="#BC5B33"/>
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png"/>
@@ -22,9 +49,12 @@ if ("serviceWorker" in navigator) {
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<!-- ⚡ API 호스트 + 302 리디렉트 목적지 미리 연결 -->
+<!-- ⚡ API 호스트 + 302 리디렉트 목적지 미리 연결 — 세션 첫 응답 100~450ms 단축 -->
 <link rel="preconnect" href="https://script.google.com" crossorigin/>
 <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin/>
+<script src="assets/react.min.js?v=3.8.4" defer></script>
+<script src="assets/react-dom.min.js?v=3.8.4" defer></script>
+<script src="assets/htm.js?v=3.8.4" defer></script>
 <!-- 폰트 CSS는 첫 페인트를 막지 않게 비동기 로드 (로드 완료 시 media 전환) -->
 <link rel="stylesheet" media="print" onload="this.media='all'" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
 <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Jua&text=감사해U한마음을전했어요&display=swap"/>
@@ -32,13 +62,14 @@ if ("serviceWorker" in navigator) {
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Jua&text=감사해U한마음을전했어요&display=swap" rel="stylesheet"/>
 </noscript>
+<link rel="stylesheet" href="assets/tw.css?v=3.8.4"/>
 <link rel="stylesheet" href="assets/style.css?v=3.8.4"/>
-<script src="assets/config.js?v=3.8.4" defer></script>
 <script src="assets/api.js?v=3.8.4" defer></script>
+<script src="assets/app.js?v=3.8.4" defer></script>
 </head>
 <body class="season-autumn">
 
-<!-- 🍂 가을 배경 -->
+<!-- 🍂 가을 배경 (React 바깥 · 순수 CSS) -->
 <div id="season-bg" aria-hidden="true">
   <!-- 따뜻한 가을 햇살 -->
   <div class="a-sun"></div>
@@ -99,76 +130,60 @@ if ("serviceWorker" in navigator) {
   <i class="a-grass a-grass--xl" style="right:-1%;width:135px;--gd:7.1s;--gdelay:-6.1s;opacity:.52;"><svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-linecap="round"><path d="M50 200 C50 150 46 105 38 62" stroke="#C9A878" stroke-width="2.8"/><path d="M58 200 C61 152 67 112 76 76" stroke="#D2B285" stroke-width="2.6"/><path d="M42 200 C40 154 33 118 24 88" stroke="#BFA06E" stroke-width="2.4"/><path d="M64 200 C64 160 62 130 56 100" stroke="#CBAA7C" stroke-width="2.2"/><path d="M36 200 C37 162 42 136 48 116" stroke="#C4A372" stroke-width="2"/></g><ellipse cx="36" cy="52" rx="7" ry="19" transform="rotate(-14 36 52)" fill="#F1E2C2"/><ellipse cx="78" cy="66" rx="6.5" ry="17" transform="rotate(13 78 66)" fill="#EBD9B4"/><ellipse cx="22" cy="78" rx="6" ry="15" transform="rotate(-20 22 78)" fill="#E6D2A8"/><ellipse cx="55" cy="91" rx="5.5" ry="14" transform="rotate(-6 55 91)" fill="#EEDEBB"/><ellipse cx="49" cy="108" rx="5" ry="12" transform="rotate(8 49 108)" fill="#E3CFA2"/></svg></i>
 </div>
 
-<div class="land-wrap">
-  <div class="slideUp" style="text-align:center;">
-    <div style="font-size:52px;line-height:1;margin-bottom:12px;filter:drop-shadow(0 6px 12px rgba(92,64,51,0.22));" class="bounceY"><svg width="60" height="60" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="mheart-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCAE85"/><stop offset="0.5" stop-color="#F39C12"/><stop offset="1" stop-color="#E67E22"/></linearGradient><linearGradient id="mheart-red" x1="0.15" y1="0" x2="0.75" y2="1"><stop offset="0" stop-color="#E74C3C"/><stop offset="1" stop-color="#C0392B"/></linearGradient><linearGradient id="mheart-stem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8B5A2B"/><stop offset="1" stop-color="#5D4037"/></linearGradient></defs><g transform="translate(4 0)"><ellipse cx="56" cy="102.5" rx="32" ry="5.5" fill="#8B5A2B" opacity="0.2"/><path d="M53.5 78 L58.5 78 L59.6 91.5 Q59.9 95.8 56.2 95.9 Q52.8 95.8 53.1 91.8 Z" fill="url(#mheart-stem)"/><path d="M56 8 C60 16 64 24 67 30 C74 26 82 21 89 19 C87 26 83 35 80 43 C88 44 96 46 103 49 C96 55 87 59 78 61 C71 66 64 72 58.5 80 L53.5 80 C48 72 41 66 34 61 C25 59 16 55 9 49 C16 46 24 44 32 43 C29 35 25 26 23 19 C30 21 38 26 45 30 C48 24 52 16 56 8 Z" fill="url(#mheart-leaf)"/><g stroke="#8B5A2B" stroke-width="2" stroke-linecap="round" opacity="0.35" fill="none"><path d="M56 74 L56 20"/><path d="M56 58 Q41 52 25 48"/><path d="M56 58 Q71 52 87 48"/><path d="M56 40 Q46 33 35 27"/><path d="M56 40 Q66 33 77 27"/></g><g transform="translate(65.8 59.8) scale(0.92) rotate(10 16 14.4)"><path d="M23.6 0 C20.2 0 17.3 2.7 16 5.6 C14.7 2.7 11.8 0 8.4 0 C3.8 0 0 3.8 0 8.4 C0 17.8 9.5 20.3 16 28.8 C22.1 20.4 32 17.4 32 8.4 C32 3.8 28.2 0 23.6 0 Z" fill="url(#mheart-red)"/><circle cx="9.2" cy="7.6" r="3" fill="#F7DC6F" opacity="0.9"/></g></g></svg></div>
-    <div class="logo-font" style="font-size:46px;line-height:1;background:linear-gradient(135deg,#3B2A20 0%,#8B4F38 40%,#A4492D 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">감사해U</div>
-    <div style="font-size:11px;font-weight:800;color:#5C4033;letter-spacing:.06em;margin-top:10px;">따뜻한 밀알인 되기 프로젝트</div>
-    <div class="land-count" id="today-count" style="visibility:hidden;">
-      💌 오늘 오간 감사 쪽지 <b id="today-count-num">0</b>개
-    </div>
-  </div>
+<div id="root"></div>
 
-  <div style="width:100%;max-width:360px;" class="popIn">
-    <div style="font-size:11px;font-weight:800;color:#64748B;letter-spacing:.1em;text-transform:uppercase;text-align:center;margin-bottom:12px;">소속 시설을 선택해주세요</div>
-    <div id="fac-list"></div>
+<!-- ⚡ 부팅 스플래시 (React 마운트 시 사라짐) -->
+<div id="boot-splash" aria-hidden="true">
+  <div class="bs-logo"><svg width="74" height="74" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="mheart-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCAE85"/><stop offset="0.5" stop-color="#F39C12"/><stop offset="1" stop-color="#E67E22"/></linearGradient><linearGradient id="mheart-red" x1="0.15" y1="0" x2="0.75" y2="1"><stop offset="0" stop-color="#E74C3C"/><stop offset="1" stop-color="#C0392B"/></linearGradient><linearGradient id="mheart-stem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8B5A2B"/><stop offset="1" stop-color="#5D4037"/></linearGradient></defs><g transform="translate(4 0)"><ellipse cx="56" cy="102.5" rx="32" ry="5.5" fill="#8B5A2B" opacity="0.2"/><path d="M53.5 78 L58.5 78 L59.6 91.5 Q59.9 95.8 56.2 95.9 Q52.8 95.8 53.1 91.8 Z" fill="url(#mheart-stem)"/><path d="M56 8 C60 16 64 24 67 30 C74 26 82 21 89 19 C87 26 83 35 80 43 C88 44 96 46 103 49 C96 55 87 59 78 61 C71 66 64 72 58.5 80 L53.5 80 C48 72 41 66 34 61 C25 59 16 55 9 49 C16 46 24 44 32 43 C29 35 25 26 23 19 C30 21 38 26 45 30 C48 24 52 16 56 8 Z" fill="url(#mheart-leaf)"/><g stroke="#8B5A2B" stroke-width="2" stroke-linecap="round" opacity="0.35" fill="none"><path d="M56 74 L56 20"/><path d="M56 58 Q41 52 25 48"/><path d="M56 58 Q71 52 87 48"/><path d="M56 40 Q46 33 35 27"/><path d="M56 40 Q66 33 77 27"/></g><g transform="translate(65.8 59.8) scale(0.92) rotate(10 16 14.4)"><path d="M23.6 0 C20.2 0 17.3 2.7 16 5.6 C14.7 2.7 11.8 0 8.4 0 C3.8 0 0 3.8 0 8.4 C0 17.8 9.5 20.3 16 28.8 C22.1 20.4 32 17.4 32 8.4 C32 3.8 28.2 0 23.6 0 Z" fill="url(#mheart-red)"/><circle cx="9.2" cy="7.6" r="3" fill="#F7DC6F" opacity="0.9"/></g></g></svg></div>
+  <div class="bs-title">감사해U</div>
+  <div class="bs-sub">
+    <span class="bs-line" style="background:linear-gradient(90deg,transparent,#EBD5B7)"></span>
+    <span class="bs-org">밀알복지재단</span>
+    <span class="bs-line" style="background:linear-gradient(90deg,#EBD5B7,transparent)"></span>
   </div>
-
-  <button id="add-home" class="popIn" style="margin-top:22px;padding:11px 22px;border-radius:9999px;border:1.5px solid #E0BFA4;background:rgba(255,255,255,.75);color:#8A4B22;font-weight:800;font-size:12.5px;cursor:pointer;display:none;">📲 바탕화면에 추가하고 앱처럼 쓰기</button>
-  <div style="margin-top:26px;font-size:10px;color:#94A3B8;font-weight:600;letter-spacing:.12em;text-transform:uppercase;">MIRAL WELFARE FOUNDATION</div>
+  <div class="bs-tag">따뜻한 밀알인 되기 프로젝트</div>
+  <div class="bs-dots"><i></i><i></i><i></i></div>
+  <div id="bs-wait" style="display:none;margin-top:16px;font-size:12px;font-weight:600;color:#5C4033;"></div>
+  <div id="bs-fail" style="display:none;margin-top:22px;max-width:300px;font-size:12.5px;line-height:1.7;color:#334155;font-weight:600;">
+    화면을 불러오지 못했어요.<br/>인터넷 연결을 확인한 뒤 다시 시도해주세요.
+    <div id="bs-fail-detail" style="margin-top:6px;font-size:10.5px;color:#94A3B8;font-weight:500;"></div>
+    <button onclick="location.reload()" style="margin-top:12px;padding:10px 22px;border-radius:9999px;border:none;cursor:pointer;color:#fff;font-weight:700;font-size:13px;background:linear-gradient(135deg,#554036,#3C2C24);box-shadow:0 6px 16px rgba(177,96,62,.25);">다시 시도</button>
+  </div>
 </div>
-
 <script>
-document.addEventListener("DOMContentLoaded", function(){
-  var GU = window.GU;
-
-  // ⭐ 자동 로그인 정보가 있으면 랜딩을 건너뛰고 바로 앱으로 (replace → 뒤로가기 루프 방지)
-  var saved = GU.loadAuth();
-  if(saved && saved.uid && saved.pw){
-    location.replace("app.html?v=" + GU.VERSION);
-    return;
+/* 안전장치: 스크립트 로드 실패 → 즉시 안내 · 서버 응답 지연 → "연결 중 N초" 표시(실패 아님) · 30초 초과 → 다시 시도 안내 */
+(function(){
+  var failed = false, started = Date.now();
+  function splash(){ var s = document.getElementById("boot-splash"); return (s && !s.classList.contains("bs-hide")) ? s : null; }
+  function fail(msg){
+    if(failed) return; failed = true;
+    var s = splash(); if(!s) return;
+    var d = s.querySelector(".bs-dots"); if(d) d.style.display = "none";
+    var w = document.getElementById("bs-wait"); if(w) w.style.display = "none";
+    var f = document.getElementById("bs-fail"); if(f) f.style.display = "block";
+    var dt = document.getElementById("bs-fail-detail"); if(dt && msg) dt.textContent = msg;
   }
-
-  var hb = document.getElementById("add-home");
-  if(hb && GU.installState && GU.installState() !== "installed"){ hb.style.display = "inline-block"; hb.onclick = function(){ GU.requestInstall(); }; }
-
-  var ICONS = ['<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="fs-soil" x1="0" y1="57" x2="0" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8B5A2B"/><stop offset="1" stop-color="#5D4037"/></linearGradient><linearGradient id="fs-leafL" x1="48" y1="47" x2="25" y2="24" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#558B2F"/><stop offset="0.72" stop-color="#558B2F"/><stop offset="1" stop-color="#A4492D"/></linearGradient><linearGradient id="fs-leafR" x1="48" y1="47" x2="71" y2="24" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7CB342"/><stop offset="0.72" stop-color="#7CB342"/><stop offset="1" stop-color="#B4703F"/></linearGradient></defs><path d="M20 80 C22 64 34 57 46 57 C58 57 70 64 72 80 Z" fill="url(#fs-soil)"/><ellipse cx="39" cy="64" rx="9" ry="3" fill="#B4703F" opacity="0.45"/><path d="M48 59 C47.5 53 47.5 49 48 43" fill="none" stroke="#558B2F" stroke-width="5" stroke-linecap="round"/><path d="M48 47 C36 45 26 36 25 24 C38 24 48 33 48 47 Z" fill="url(#fs-leafL)"/><path d="M48 47 C60 45 70 36 71 24 C58 24 48 33 48 47 Z" fill="url(#fs-leafR)"/><path d="M0 -7 L1.6 -2.6 L6.4 -4.2 L3.6 0.4 L5 4 L1.2 2.8 L0 7 L-1.2 2.8 L-5 4 L-3.6 0.4 L-6.4 -4.2 L-1.6 -2.6 Z" transform="translate(80 70) rotate(24) scale(0.9)" fill="#BC5B33"/></svg>', '<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="fb-body" x1="0" y1="36" x2="0" y2="78" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#BC5B33"/><stop offset="1" stop-color="#A4492D"/></linearGradient></defs><path d="M35 44 C35 20 61 20 61 44" fill="none" stroke="#5D4037" stroke-width="5" stroke-linecap="round"/><path d="M40 48 C40 26 56 26 56 48" fill="none" stroke="#8B5A2B" stroke-width="5" stroke-linecap="round"/><rect x="25" y="36" width="46" height="42" rx="7" fill="url(#fb-body)"/><path d="M25 45 V43 C25 39 28 36 32 36 H64 C68 36 71 39 71 43 V45 Z" fill="#A4492D"/><path d="M0 4.6 C-5 0.8 -6.2 -2.4 -4.1 -4.4 C-2.3 -6 -0.6 -4.9 0 -3.1 C0.6 -4.9 2.3 -6 4.1 -4.4 C6.2 -2.4 5 0.8 0 4.6 Z" transform="translate(48 60) scale(1.5)" fill="#FDF0DC"/></svg>', '<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="fg-strap" x1="0" y1="38" x2="0" y2="78" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FDF0DC"/><stop offset="1" stop-color="#DCAE85"/></linearGradient></defs><rect x="27" y="50" width="42" height="28" rx="5" fill="#A4492D"/><rect x="29" y="50" width="38" height="5" fill="#9A3412"/><rect x="22" y="38" width="52" height="14" rx="5" fill="#BC5B33"/><rect x="43" y="38" width="10" height="40" fill="url(#fg-strap)"/><ellipse cx="37" cy="33" rx="9" ry="5.5" transform="rotate(-22 37 33)" fill="#DCAE85"/><ellipse cx="59" cy="33" rx="9" ry="5.5" transform="rotate(22 59 33)" fill="#DCAE85"/><circle cx="48" cy="35" r="4.5" fill="#FDF0DC"/></svg>'];
-  var SUBS = ["법인 본부", "", ""];   // 빈 값이면 회색 줄 자체를 안 만들어 이름이 세로 가운데로 옴
-  var listEl = document.getElementById("fac-list");
-  GU.FACILITIES.forEach(function(fac, i){
-    var btn = document.createElement("button");
-    btn.className = "fac-card";
-    btn.innerHTML =
-      '<div class="fc-icon">' + ICONS[i % ICONS.length] + '</div>' +
-      '<div><div class="fc-name">' + fac + '</div>' +
-      (SUBS[i] ? '<div class="fc-sub">' + SUBS[i] + '</div>' : '') + '</div>' +
-      '<svg class="fc-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
-    btn.addEventListener("click", function(){
-      GU.saveFac(fac);
-      // 시설을 URL로도 전달 — 저장소가 제한된 환경(사내 브라우저 정책 등)에서도 안전
-      location.href = "app.html?fac=" + encodeURIComponent(fac) + "&v=" + GU.VERSION;
-    });
-    listEl.appendChild(btn);
+  window.addEventListener("error", function(e){
+    var m = (e && e.message) || "";
+    if(/is not defined|Cannot read|Unexpected/i.test(m)) fail("오류: " + m.slice(0,80));
   });
-
-  // 오늘 쪽지 수 — 60초 로컬 캐시로 서버 재호출 억제
-  function showCount(n){
-    document.getElementById("today-count-num").textContent = n;
-    document.getElementById("today-count").style.visibility = "visible";
-  }
-  var cached = null;
-  try{ cached = JSON.parse(localStorage.getItem("gu3.landing") || "null"); }catch(e){}
-  if(cached && (Date.now() - cached.at) < 60000){
-    showCount(cached.n);
-  }else{
-    GU.api("getLanding").then(function(r){
-      if(r && r.ok){
-        showCount(r.todayCount || 0);
-        try{ localStorage.setItem("gu3.landing", JSON.stringify({ n:r.todayCount||0, at:Date.now() })); }catch(e){}
-      }
-    });
-  }
-});
+  var tick = setInterval(function(){
+    var s = splash(); if(!s){ clearInterval(tick); return; }
+    var sec = Math.round((Date.now() - started) / 1000);
+    var missing = [];
+    if(typeof React === "undefined") missing.push("React");
+    if(typeof htm === "undefined") missing.push("htm");
+    if(typeof window.GU === "undefined") missing.push("config");
+    if(sec >= 8 && missing.length){ fail("불러오지 못한 항목: " + missing.join(", ")); clearInterval(tick); return; }
+    var pending = (window.GU && window.GU.pending) || 0;
+    if(sec >= 4){
+      var w = document.getElementById("bs-wait");
+      if(w){ w.style.display = "block"; w.textContent = pending > 0 ? ("서버에 연결하는 중이에요 · " + sec + "초") : ("준비 중이에요 · " + sec + "초"); }
+    }
+    if(sec >= 30){ fail("서버 응답이 너무 늦어요. 잠시 후 다시 시도해주세요."); clearInterval(tick); }
+  }, 1000);
+})();
 </script>
+
 </body>
 </html>
