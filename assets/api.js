@@ -18,7 +18,22 @@
   //   서버 처리가 크면 우리 코드 문제.
   GU.perf = [];
   GU.pending = 0;   // 진행 중인 서버 요청 수 — app.html 스플래시 안전장치가 참고
-  var TIMEOUT_MS = 20000;   // 20초 넘게 답이 없으면 실패로 처리 — 무한 대기 방지
+  // ⏱ 기다리는 시간 — 읽기 20초 / 쓰기 30초 (v3.8.5)
+  //    서버는 쓰기 요청을 '순서 기다리기'에 최대 20초 쓴다(백엔드 03_Util.gs withLock).
+  //    그런데 앱의 타이머는 요청을 보내기 '전'에 시작하므로 왕복 시간만큼 앱이 항상 먼저 포기했다.
+  //    → 서버는 저장에 성공했는데 화면에는 실패가 떠서 같은 쪽지가 두 통 가는 원인.
+  //    쓰기만 30초로 늘려 그 구간을 닫는다. 읽기는 기존 20초 그대로.
+  var TIMEOUT_MS = 20000;         // 읽기
+  var WRITE_TIMEOUT_MS = 30000;   // 쓰기 (서버 대기 20초 + 처리 + 왕복 여유)
+  function timeoutFor(action){ return RETRY_SAFE[action] ? TIMEOUT_MS : WRITE_TIMEOUT_MS; }
+  // 통신 실패를 원인별로 구분해 돌려준다 — 화면이 안내 문구를 다르게 낼 수 있도록.
+  //   _timeout true  = 앱이 기다리다 먼저 끊음 → 서버는 이미 저장했을 수 있음(재전송 전 확인 필요)
+  //   _timeout false = 연결이 끊기거나 응답을 해석하지 못함 → 대개 저장되지 않음(다시 보내도 안전)
+  // 기존 error 문구는 그대로 둔다(다른 화면의 안내가 바뀌지 않도록).
+  function failResult(e){
+    var aborted = !!(e && (e.name === "AbortError" || e.name === "TimeoutError"));
+    return { ok:false, _netFail:true, _timeout:aborted, error:"연결이 불안정해요. 잠시 후 다시 시도해주세요." };
+  }
   async function post(body){
     var t0 = performance.now();
     GU.pending++;
@@ -26,7 +41,7 @@
     try{
       if(typeof AbortController === "function"){
         ac = new AbortController();
-        timer = setTimeout(function(){ try{ ac.abort(); }catch(e){} }, TIMEOUT_MS);
+        timer = setTimeout(function(){ try{ ac.abort(); }catch(e){} }, timeoutFor(body && body.action));
       }
       r = await fetch(GU.SHEET_URL, {
         method: "POST", mode: "cors",
@@ -70,12 +85,12 @@
     }catch(e){
       if(!RETRY_SAFE[action]){
         console.warn("API 실패:", action, e && e.message);
-        return { ok:false, error:"연결이 불안정해요. 잠시 후 다시 시도해주세요." };
+        return failResult(e);
       }
       try{ return await post(body); }
       catch(e2){
         console.warn("API 실패:", action, e2 && e2.message);
-        return { ok:false, error:"연결이 불안정해요. 잠시 후 다시 시도해주세요." };
+        return failResult(e2);
       }
     }
   };

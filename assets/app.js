@@ -464,6 +464,19 @@ function apiCallFireForget(p) {
   }
 }
 
+/* 🆕 v3.8.5 — 겹쳐 열린 모달의 배경 스크롤 잠금 정리
+ *   전송 실패 확인처럼 '작성 창 위에 쪽지함'이 겹치는 경우, 위쪽 하나만 닫아도
+ *   body 의 modal-open 이 통째로 벗겨져 뒤 배경이 스크롤되던 문제를 막는다(열린 개수로 셈). */
+var _modalOpenCount = 0;
+function lockBodyScroll() {
+  _modalOpenCount++;
+  document.body.classList.add("modal-open");
+  return function () {
+    _modalOpenCount = Math.max(0, _modalOpenCount - 1);
+    if (_modalOpenCount === 0) document.body.classList.remove("modal-open");
+  };
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
  * 🍡 추석 이벤트 — 행운의 꿀송편을 찾아라!  (v3.8.0 · 프론트 설정 · 공용 헬퍼)
  *   · 판정(당첨/횟수/수량/기간)은 전부 백엔드 16_Songpyeon.gs 가 하고, 화면은 응답의 songpyeon.show / win 만 믿습니다.
@@ -2088,6 +2101,7 @@ function Dashboard({
   const [unreadCount, setUnreadCount] = useState(initialData?.unreadCount || 0);
   const [compose, setCompose] = useState(false);
   const [ibOpen, setIbOpen] = useState(false);
+  const [ibTab, setIbTab] = useState("inbox");   // 🆕 쪽지함을 어느 탭으로 열지 (전송 실패 확인은 '보낸 쪽지')
   const [toast, setToast] = useState(null);
   const [shake, setShake] = useState(false);
   const [notice, setNotice] = useState(initialData?.notice || {
@@ -2155,11 +2169,12 @@ function Dashboard({
     if (r.ok) {
       if (r._unchanged && !initialLoadRef.current) {   // ⚡ 무변경 폴링 → setState·전체 리렌더 생략
         if (opts.silent !== true) setLoading(false);
-        return;
+        return r;                                      // 🆕 받아온 결과를 호출한 쪽이 볼 수 있게 돌려줌
       }
       applyRef.current(r);
     }
     if (opts.silent !== true) setLoading(false);
+    return r;                                          // 🆕 (쪽지함 열 때 최신 미읽음 수를 바로 쓰기 위함)
   }, [me]);
   // 서버 데이터(대시보드 모양) → 화면 상태 반영 + 새 쪽지 안내 (폴링 · 빠른 부팅 확인 공용)
   applyRef.current = r => {
@@ -2275,9 +2290,29 @@ function Dashboard({
       }
     };
     document.addEventListener('visibilitychange', onVisible);
+    // 🆕 v3.8.5 — 인터넷이 다시 연결됐을 때 · 뒤로가기로 화면이 복원됐을 때도 갱신.
+    //    화면 전환(visibilitychange)만으로는 이 두 경우가 잡히지 않아 3분을 더 기다려야 했다.
+    //    여러 사람이 동시에 복구될 수 있으므로 1.2초 뒤에 한 번만 보낸다(몰림 방지).
+    let backTimer = null;
+    const onBack = () => {
+      if (backTimer) clearTimeout(backTimer);
+      backTimer = setTimeout(() => {
+        if (!document.hidden) load({
+          silent: true
+        });
+      }, 1200);
+    };
+    const onPageShow = e => {
+      if (e && e.persisted) onBack();   // 뒤로가기 복원(bfcache)일 때만 — 일반 진입은 부팅 경로가 이미 처리
+    };
+    window.addEventListener('online', onBack);
+    window.addEventListener('pageshow', onPageShow);
     return () => {
       clearInterval(intv);
       document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('online', onBack);
+      window.removeEventListener('pageshow', onPageShow);
+      if (backTimer) clearTimeout(backTimer);
     };
   }, [load, loadNotice]);
   const onSent = payload => {
@@ -2310,14 +2345,27 @@ function Dashboard({
     if (payload && typeof payload.newTemp === "number") setTemp(payload.newTemp);
     if (payload && payload.entry) setDiary(prev => GU.mergeDiary(prev, [payload.entry]));
   };
-  const handleOpenInbox = async () => {
+  // 🆕 v3.8.5 — 쪽지함을 열 때 최신 쪽지를 '먼저' 받아온다.
+  //    이전에는 읽음 처리만 보내고 목록은 마지막 폴링 결과(최대 3.6분 전) 그대로였다.
+  //    → 알림을 보고 쪽지함을 열어도 새 쪽지가 안 보이던 원인.
+  //    · 창은 즉시 연다(기다렸다 열면 버튼이 먹통처럼 보임). 목록만 뒤늦게 채워진다.
+  //    · 읽음 처리는 '갱신을 받은 뒤'에 보낸다. 먼저 보내면 서버가 지금 시각을 기준으로 삼아
+  //      방금 도착한 쪽지까지 읽음으로 계산해 강조 표시가 사라진다(백엔드 06_Notes.gs markAsRead).
+  const handleOpenInbox = async tab => {
+    setIbTab(tab === "sent" ? "sent" : "inbox");
     setIbOpen(true);
-    if (unreadCount > 0) {
+    let fresh = null;
+    try {
+      fresh = await load({ silent: true });
+    } catch (e) {}
+    const unread = fresh && fresh.ok && typeof fresh.unreadCount === "number" ? fresh.unreadCount : unreadCount;
+    if (unread > 0) {
       apiCall({
         action: "markAsRead",
         name: me,
         password: pw
-      }).then(() => {
+      }).then(res => {
+        if (!(res && res.ok)) return;   // 🆕 서버가 확인해 준 경우에만 화면에 반영 (배지가 0이 됐다 되살아나는 깜빡임 방지)
         setUnreadCount(0);
         setInbox(prev => prev.map(m => ({
           ...m,
@@ -2713,13 +2761,17 @@ function Dashboard({
       setCompose(false);
       setReplyTo(null);
     },
-    onSent: onSent
+    onSent: onSent,
+    // 🆕 전송이 시간 초과로 끊겼을 때 "보낸 쪽지 확인하기" — 쓰던 내용을 지우지 않으려고
+    //    작성 창은 그대로 둔 채 쪽지함을 위에 띄운다(닫으면 쓰던 쪽지가 그대로 남아 있음).
+    onCheckSent: () => handleOpenInbox("sent")
   }), ibOpen && /*#__PURE__*/React.createElement(InboxModal, {
     me: me,
     temp: temp,
     inbox: inbox,
     sent: sent,
     onReply: onReply,
+    initialTab: ibTab,
     onClose: () => setIbOpen(false)
   }), diaryOpen && /*#__PURE__*/React.createElement(DiaryModal, {
     me: me,
@@ -2803,13 +2855,16 @@ function ComposeModal({
   currentTemp,
   replyTo,
   onClose,
-  onSent
+  onSent,
+  onCheckSent
 }) {
   const [rec, setRec] = useState(replyTo?.from || "");
   const [sel, setSel] = useState([]);
   const [msg, setMsg] = useState("");
   const [err, setErr] = useState("");
   const [sending, setSending] = useState(false);
+  const [needCheck, setNeedCheck] = useState(false);   // 🆕 시간 초과 — 저장됐을 수 있어 '확인 먼저' 단계
+  const [elapsed, setElapsed] = useState(0);           // 🆕 보내는 중 경과 초 (기다림이 길어져도 멈춘 게 아님을 보여줌)
   const [success, setSuccess] = useState(null);
   const [rOpen, setROpen] = useState(false);
   const [rSearch, setRSearch] = useState("");
@@ -2819,9 +2874,19 @@ function ComposeModal({
   const [facTab, setFacTab] = useState("mine");
   const [otherFac, setOtherFac] = useState(otherFacs[0] || "");
   useEffect(() => {
-    document.body.classList.add("modal-open");
-    return () => document.body.classList.remove("modal-open");
+    var _unlockBody = lockBodyScroll();
+    return () => _unlockBody();
   }, []);
+  // 🆕 보내는 중 경과 시간 — 1초마다 갱신, 끝나면 정리
+  useEffect(() => {
+    if (!sending) {
+      setElapsed(0);
+      return;
+    }
+    const t0 = Date.now();
+    const iv = setInterval(() => setElapsed(Math.floor((Date.now() - t0) / 1000)), 1000);
+    return () => clearInterval(iv);
+  }, [sending]);
   const toggle = id => setSel(s => s.includes(id) ? s.filter(x => x !== id) : [...s, id]);
   // ⭐ 검색어가 있으면 전 기관 통합 검색, 없으면 탭(우리/타 기관) 기준
   const receivers = useMemo(() => {
@@ -2834,8 +2899,13 @@ function ComposeModal({
   }, [rSearch, receivers]);
   const grouped = useMemo(() => groupByDept(filtered), [filtered]);
   const spPhase = songpyeonEligibleFac() ? songpyeonPhase(GUD.songpyeon) : "after"; // 🍡 밀알복지재단만 · "before" | "active" | "after" (표시용, 판정은 백엔드)
-  const send = async () => {
+  // 🆕 v3.8.5 — force=true 는 "확인했어요 · 그래도 다시 보내기" 에서만 넘어온다.
+  //    (버튼의 onClick 이 이벤트 객체를 넘기지 않도록 호출부를 () => send() 로 둔다)
+  const send = async force => {
+    if (sending) return;                            // 🆕 진행 중 재진입 차단
+    if (needCheck && force !== true) return;        // 🆕 확인 단계에서는 일반 전송 차단
     setErr("");
+    setNeedCheck(false);
     if (!rec) {
       setErr("받는 분을 선택해주세요");
       return;
@@ -2855,7 +2925,19 @@ function ComposeModal({
     });
     setSending(false);
     if (!r.ok) {
-      setErr(r.error || "전송 실패");
+      // 🆕 실패를 두 갈래로 나눈다.
+      //   · _netFail : 앱이 서버의 답을 받지 못한 경우(시간 초과 · 연결 끊김 · 302 뒤 404 HTML).
+      //                서버는 이미 저장했을 수 있으므로 '확인 먼저' 단계로 보낸다.
+      //                ※ 404 HTML 은 실제 운영에서 '저장은 됐는데 응답만 유실'로 관찰된 적이 있어
+      //                  안전한 실패로 분류하지 않는다. 확인 한 단계가 쪽지 두 통보다 낫다.
+      //   · 그 밖    : 서버가 직접 알려준 실패(예: 순서를 못 잡아 '잠시 후 다시 시도해주세요').
+      //                서버가 답을 준 이상 저장은 없었으므로 그대로 다시 보내도 안전하다.
+      if (r._netFail) {
+        setNeedCheck(true);
+        setErr("");
+      } else {
+        setErr(r.error || "전송 실패");
+      }
       return;
     }
     apiCallFireForget({
@@ -2933,7 +3015,9 @@ function ComposeModal({
     className: "text-base font-extrabold text-slate-800 track-tight"
   }, "따뜻한 마음을 전송 중이에요"), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-slate-400 mt-1.5 font-medium"
-  }, "조금만 기다려 주세요")), /*#__PURE__*/React.createElement("div", {
+  }, elapsed >= 4 ? "조금만 기다려 주세요 · " + elapsed + "초" : "조금만 기다려 주세요"), elapsed >= 12 && /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-slate-400 mt-1 font-medium"
+  }, "사람이 몰리면 조금 더 걸려요. 창을 닫지 말고 기다려 주세요")), /*#__PURE__*/React.createElement("div", {
     className: "p-5 space-y-5"
   }, /*#__PURE__*/React.createElement(SafeBoundary, null, /*#__PURE__*/React.createElement(SongpyeonBanner, {
     phase: spPhase,
@@ -3126,11 +3210,31 @@ function ComposeModal({
       borderTop: "1px solid rgba(15,23,42,0.06)",
       background: "rgba(255,255,255,0.6)"
     }
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: send,
+  },
+  // 🆕 v3.8.5 — 시간 초과로 끊겼을 때는 '다시 보내기' 대신 '확인 먼저'를 보여준다.
+  //    서버는 이미 저장했을 수 있어, 여기서 곧바로 다시 누르면 같은 쪽지가 두 통 간다.
+  needCheck ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "rounded-2xl p-3.5 text-center text-sm font-bold mb-3",
+    style: {
+      background: "#FFF7ED",
+      border: "1px solid #FDBA74",
+      color: "#9A3412"
+    }
+  }, "이미 전달됐을 수 있어요", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+    className: "font-semibold"
+  }, "보낸 쪽지를 먼저 확인해 주세요")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      if (typeof onCheckSent === "function") onCheckSent();
+    },
+    className: "w-full py-4 rounded-2xl btn btn-g text-sm track-tight"
+  }, "보낸 쪽지 확인하기"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => send(true),
+    className: "w-full mt-2 py-2 text-xs text-slate-400 font-semibold underline"
+  }, "확인했어요 · 그래도 다시 보내기")) : /*#__PURE__*/React.createElement("button", {
+    onClick: () => send(),
     disabled: sending,
     className: "w-full py-4 rounded-2xl btn btn-g text-sm disabled:opacity-60 track-tight"
-  }, "감사 전하기 🧡"))), success && /*#__PURE__*/React.createElement(SuccessModal, {
+  }, sending ? "보내는 중…" : "감사 전하기 🧡"))), success && /*#__PURE__*/React.createElement(SuccessModal, {
     oldTemp: success.oldTemp,
     newTemp: success.newTemp,
     rose: success.rose,
@@ -3230,7 +3334,7 @@ function SongpyeonModal({
     }
   };
   useEffect(() => {
-    document.body.classList.add("modal-open");
+    var _unlockBody = lockBodyScroll();
     // 키보드·스크린리더 사용자: 열리면 송편 버튼에 포커스, Esc 로 닫기 (실패해도 무시)
     try {
       bunRef.current && bunRef.current.focus({
@@ -3242,7 +3346,7 @@ function SongpyeonModal({
     };
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.classList.remove("modal-open");
+      _unlockBody();
       window.removeEventListener("keydown", onKey);
     };
   }, []);
@@ -3507,13 +3611,14 @@ function InboxModal({
   inbox,
   sent,
   onReply,
-  onClose
+  onClose,
+  initialTab
 }) {
-  const [tab, setTab] = useState("inbox");
+  const [tab, setTab] = useState(initialTab === "sent" ? "sent" : "inbox");   // 🆕 열 때 지정한 탭으로 시작
   const [pdfBusy, setPdfBusy] = useState(false);
   useEffect(() => {
-    document.body.classList.add("modal-open");
-    return () => document.body.classList.remove("modal-open");
+    var _unlockBody = lockBodyScroll();
+    return () => _unlockBody();
   }, []);
   const list = tab === "inbox" ? inbox : sent;
   // ⚡ 페이지네이션 — 수백 통 쌓여도 모달이 즉시 열리게 처음 80건만 렌더 (PDF 내보내기는 전체 list 그대로)
@@ -3775,8 +3880,8 @@ function DiaryModal({
   const [viewM, setViewM] = useState(initM);
   const [selDate, setSelDate] = useState(tKey);
   useEffect(() => {
-    document.body.classList.add("modal-open");
-    return () => document.body.classList.remove("modal-open");
+    var _unlockBody = lockBodyScroll();
+    return () => _unlockBody();
   }, []);
   const pad = n => String(n).padStart(2, "0");
   const keyOf = (y, m, d) => `${y}-${pad(m)}-${pad(d)}`;
@@ -4511,8 +4616,8 @@ function NoticeEditor(props) {
 }
 function AdminModal({ onClose }) {
   useEffect(function () {
-    document.body.classList.add("modal-open");
-    return function () { document.body.classList.remove("modal-open"); };
+    var _unlockBody = lockBodyScroll();
+    return function () { _unlockBody(); };
   }, []);
   return React.createElement("div", {
     className: "fixed inset-0 z-[85] fadeIn",
