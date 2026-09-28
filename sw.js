@@ -6,14 +6,21 @@ self.addEventListener('activate', function(e){ e.waitUntil(self.clients.claim())
 self.addEventListener('fetch', function(){ /* 가로채지 않음 */ });
 
 self.addEventListener('push', function(e){
-  e.waitUntil(self.registration.showNotification('감사해U', {
-    body: '💌 새 감사 쪽지가 도착했어요!',
-    icon: 'assets/icon-192.png',
-    badge: 'assets/icon-192.png',
-    tag: 'gu-note',
-    renotify: true,
-    data: { url: 'app.html' }
-  }));
+  e.waitUntil(Promise.all([
+    self.registration.showNotification('감사해U', {
+      body: '💌 새 감사 쪽지가 도착했어요!',
+      icon: 'assets/icon-192.png',
+      badge: 'assets/icon-192.png',
+      tag: 'gu-note',
+      renotify: true,
+      data: { url: 'app.html' }
+    }),
+    /* 🆕 v3.8.7 — 앱을 열어 둔 창에도 '새 쪽지' 신호를 보내 폴링(최대 3.6분)을 기다리지 않고 갱신하게 함.
+       실패해도 알림 표시에는 영향 없음. */
+    self.clients.matchAll({ type:'window', includeUncontrolled:true }).then(function(list){
+      list.forEach(function(c){ try{ c.postMessage({ type:'gu-push' }); }catch(err){} });
+    }).catch(function(){})
+  ]));
 });
 
 self.addEventListener('notificationclick', function(e){
