@@ -18,7 +18,7 @@
   //   서버 처리가 크면 우리 코드 문제.
   GU.perf = [];
   GU.pending = 0;   // 진행 중인 서버 요청 수 — app.html 스플래시 안전장치가 참고
-  // ⏱ 기다리는 시간 — 읽기 20초 / 쓰기 30초 (v3.8.5)
+  // ⏱ 기다리는 시간 — 읽기 20초 / 쓰기 30초 (v3.8.6)
   //    서버는 쓰기 요청을 '순서 기다리기'에 최대 20초 쓴다(백엔드 03_Util.gs withLock).
   //    그런데 앱의 타이머는 요청을 보내기 '전'에 시작하므로 왕복 시간만큼 앱이 항상 먼저 포기했다.
   //    → 서버는 저장에 성공했는데 화면에는 실패가 떠서 같은 쪽지가 두 통 가는 원인.
@@ -27,8 +27,9 @@
   var WRITE_TIMEOUT_MS = 30000;   // 쓰기 (서버 대기 20초 + 처리 + 왕복 여유)
   function timeoutFor(action){ return RETRY_SAFE[action] ? TIMEOUT_MS : WRITE_TIMEOUT_MS; }
   // 통신 실패를 원인별로 구분해 돌려준다 — 화면이 안내 문구를 다르게 낼 수 있도록.
-  //   _timeout true  = 앱이 기다리다 먼저 끊음 → 서버는 이미 저장했을 수 있음(재전송 전 확인 필요)
-  //   _timeout false = 연결이 끊기거나 응답을 해석하지 못함 → 대개 저장되지 않음(다시 보내도 안전)
+  //   _netFail true = 서버의 답을 받지 못함(시간 초과 · 연결 끊김 · 302 뒤 404 HTML)
+  //                   → 서버는 이미 저장했을 수 있으므로 쓰기 화면은 '확인 먼저'로 보낸다.
+  //   _timeout      = 그중에서도 시간 초과였는지 (안내 문구 세분화용)
   // 기존 error 문구는 그대로 둔다(다른 화면의 안내가 바뀌지 않도록).
   function failResult(e){
     var aborted = !!(e && (e.name === "AbortError" || e.name === "TimeoutError"));
@@ -50,9 +51,9 @@
         signal: ac ? ac.signal : undefined
       });
     }catch(e){ GU.pending--; if(timer) clearTimeout(timer); throw e; }
-    if(timer) clearTimeout(timer);
+    // 🆕 v3.8.7 — 타이머를 본문(r.json)까지 덮는다. 예전엔 헤더만 받으면 타이머를 꺼서 84KB 본문이 멎으면 무한 대기였다.
     var j;
-    try{ j = await r.json(); }finally{ GU.pending--; }
+    try{ j = await r.json(); }finally{ GU.pending--; if(timer) clearTimeout(timer); }
     try{
       var rec = { action: body.action, total: Math.round(performance.now() - t0), server: (j && j._t) || null, at: new Date().toLocaleTimeString() };
       GU.perf.push(rec);
@@ -145,11 +146,21 @@
   GU.saveFac = function(fac){ lsSet("gu3.fac", fac); };
 
   /* ---------- 명단 캐시 (rosterVersion 기반) ---------- */
+  var _rfMemo = null;   // 🆕 v3.8.7 — loadFull 결과 메모(같은 실행 안 재파싱 방지)
   GU.rosterCache = {
     loadPublic: function(fac){ return lsGet("gu3.roster.pub." + fac); },
     savePublic: function(fac, data){ lsSet("gu3.roster.pub." + fac, data); },
-    loadFull: function(){ return lsGet("gu3.roster.full"); },
-    saveFull: function(data){ lsSet("gu3.roster.full", data); lsSet("gu3.roster.ver", (data && data.ver) || 0); }   // ⚡ 부팅용 버전 마커 동시 기록
+    loadFull: function(){   // 🆕 v3.8.7 — 부팅 중 여러 번 읽는 31.6KB 명단을 실행당 1회만 파싱
+      if(_rfMemo) return _rfMemo;
+      _rfMemo = lsGet("gu3.roster.full"); return _rfMemo;
+    },
+    // ⚡ 부팅용 버전 마커 동시 기록 — 🆕 v3.8.7: 본문 저장이 성공했을 때만 마커를 남긴다
+    //    (본문은 실패했는데 마커만 남으면 다음 부팅이 "명단 최신"이라 믿고 빈 명단으로 굳음)
+    saveFull: function(data){
+      var ok = lsSet("gu3.roster.full", data);
+      if(ok) lsSet("gu3.roster.ver", (data && data.ver) || 0); else lsDel("gu3.roster.ver");
+      _rfMemo = ok ? data : null;
+    }
   };
   // 전체 명단 확보(버전 일치 시 캐시 사용) → uid→직원 맵과 배열 반환
   GU.ensureRosterFull = async function(serverVer){
@@ -188,16 +199,20 @@
       return { schema: GU.CACHE_SCHEMA, latestTs: 0, lastReadTs: 0, inbox: [], sent: [], diary: [] };
     },
     save: function(uid, data){
-      data.inbox = data.inbox.slice(0, GU.LIST_CACHE_MAX);
-      data.sent  = data.sent.slice(0, GU.LIST_CACHE_MAX);
-      data.diary = data.diary.slice(0, 400);   // 일기도 상한(용량 보호)
-      var ok = lsSet(dataKey(uid), data);
+      if(!uid) return;   // 🆕 v3.8.7 — 로그아웃 뒤 늦게 온 응답이 gu3.data.0 을 만들지 않게
+      // 🆕 v3.8.7 — 저장용 사본만 자른다. 화면이 들고 있는 원본 배열은 그대로(용량 초과 기기에서 세션 중 옛 쪽지가 사라지던 문제)
+      var out = Object.assign({}, data, {
+        inbox: data.inbox.slice(0, GU.LIST_CACHE_MAX),
+        sent:  data.sent.slice(0, GU.LIST_CACHE_MAX),
+        diary: data.diary.slice(0, 400)   // 일기도 상한(용량 보호)
+      });
+      var ok = lsSet(dataKey(uid), out);
       if(!ok){
         // 용량 초과 → 보관량 절반으로 줄여 재시도
-        data.inbox = data.inbox.slice(0, Math.floor(GU.LIST_CACHE_MAX/2));
-        data.sent  = data.sent.slice(0, Math.floor(GU.LIST_CACHE_MAX/2));
-        data.diary = data.diary.slice(0, 200);
-        ok = lsSet(dataKey(uid), data);
+        out.inbox = data.inbox.slice(0, Math.floor(GU.LIST_CACHE_MAX/2));
+        out.sent  = data.sent.slice(0, Math.floor(GU.LIST_CACHE_MAX/2));
+        out.diary = data.diary.slice(0, 200);
+        ok = lsSet(dataKey(uid), out);
       }
       if(ok) lsSet("gu3.hasData." + uid, GU.CACHE_SCHEMA); else lsDel("gu3.hasData." + uid);
       _dcMemo = { uid: uid, data: data };
@@ -210,7 +225,7 @@
    */
   GU.snapCache = {
     load: function(uid){ var o = lsGet("gu3.snap." + uid); return (o && o.v === 1) ? o : null; },
-    save: function(uid, o){ o.v = 1; lsSet("gu3.snap." + uid, o); },
+    save: function(uid, o){ if(!uid) return; o.v = 1; lsSet("gu3.snap." + uid, o); },   // 🆕 v3.8.7 — uid 0 거부
     clear: function(uid){ lsDel("gu3.snap." + uid); }
   };
 
@@ -356,6 +371,14 @@
   function isStandalone(){
     try{ return (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || !!navigator.standalone; }catch(e){ return false; }
   }
+  // 🆕 v3.8.7 — 서비스워커 등록이 실패한 기기에서 navigator.serviceWorker.ready 는 영원히 안 풀린다 → 3초 상한
+  //    (알림 토글이 '켜는 중…'에 고착되던 문제). 정상 기기에서는 수십 ms 안에 풀리므로 영향 없음.
+  function swReady(){
+    return new Promise(function(resolve, reject){
+      var t = setTimeout(function(){ reject(new Error("service worker not ready")); }, 3000);
+      navigator.serviceWorker.ready.then(function(reg){ clearTimeout(t); resolve(reg); }, function(e){ clearTimeout(t); reject(e); });
+    });
+  }
 
   // 'need-install' | 'unsupported' | 'denied' | 'on' | 'off'
   GU.pushState = async function(){
@@ -365,7 +388,7 @@
     }
     if(Notification.permission === "denied") return "denied";
     try{
-      var reg = await navigator.serviceWorker.ready;
+      var reg = await swReady();
       var sub = await reg.pushManager.getSubscription();
       return sub ? "on" : "off";
     }catch(e){ return "off"; }
@@ -375,7 +398,7 @@
     try{
       var perm = await Notification.requestPermission();
       if(perm !== "granted") return { ok:false, denied: perm === "denied" };
-      var reg = await navigator.serviceWorker.ready;
+      var reg = await swReady();
       var sub = await reg.pushManager.getSubscription();
       if(!sub){
         sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: b64uToU8(GU.PUSH_PUBLIC_KEY) });
@@ -391,7 +414,7 @@
     var s = GU.session || {};   // 로그아웃 중에도 해제 요청이 원래 사용자 이름으로 가도록 먼저 붙잡아 둠
     try{
       if(!("serviceWorker" in navigator)) return { ok:true };
-      var reg = await navigator.serviceWorker.ready;
+      var reg = await swReady();
       var sub = await reg.pushManager.getSubscription();
       if(sub){
         var ep = sub.endpoint;
