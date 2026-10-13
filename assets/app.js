@@ -2475,7 +2475,9 @@ function Dashboard({
       border: "1px solid var(--line)",
       boxShadow: "0 1px 2px rgba(15,23,42,0.03)"
     }
-  }, "로그아웃"))), /*#__PURE__*/React.createElement("div", {
+  }, "로그아웃"))),
+  // 💌 '오늘 오간 감사 쪽지' 칩 — config.js 의 SHOW_TODAY_COUNT 가 true 일 때만 표시 (기본 false = 숨김)
+  GU.SHOW_TODAY_COUNT === true && /*#__PURE__*/React.createElement("div", {
     className: "text-center mb-3 slideUp",
     style: {
       animationDelay: "0.04s"

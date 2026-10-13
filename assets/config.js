@@ -9,7 +9,10 @@ window.GU = {
   // SHEET_URL — 백엔드 01_Config.gs 의 WEB_APP_URL 과 반드시 같은 값 (현재 시즌3 운영 백엔드 주소).
   //   [배포 → 배포 관리 → 새 버전]으로 올리면 주소가 유지되므로 그대로 두고, '새 배포'를 새로 만든 경우에만 두 파일을 함께 교체.
   SHEET_URL: "https://script.google.com/macros/s/AKfycbxDqNAO7DyfPMHw-3qdUPp3DApucXf3r8zIf5HFK7yYLQLzQLu8e4sa3lUg4ouaLd0y/exec",
-  VERSION: "3.8.7",   // 🧹 이벤트 없는 기본판 — 3.8.5 긴급수정 + 3.8.7 최적화 포함. 프론트 파일을 바꿔 올릴 때마다 올릴 것(캐시 무효화)
+  VERSION: "3.8.8",   // 🧹 이벤트 없는 기본판 — 3.8.5 긴급수정 + 3.8.7 최적화 포함. 프론트 파일을 바꿔 올릴 때마다 올릴 것(캐시 무효화)
+  // 💌 '오늘 오간 감사 쪽지' 건수 표시 — 로그인 후 대시보드(우리 시설·전체)와 시설 선택 화면 둘 다에 적용됩니다.
+  //    false = 숨김(현재) · true = 다시 보임.  이 한 줄만 바꾸고 프론트를 올리면 됩니다(백엔드 무관).
+  SHOW_TODAY_COUNT: false,
   FACILITIES: ["밀알복지재단", "송파 굿윌스토어", "기빙플러스"],
   PW_PREFIX: "pw",          // 4자리 PIN 앞에 붙여 시트의 숫자 자동변환 방지 (시즌2와 동일)
   CACHE_SCHEMA: 3,          // 로컬 캐시 스키마 버전 — 구조 변경 시 올리면 전체 재동기화
