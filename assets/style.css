@@ -578,3 +578,75 @@ body.modal-open{overflow:hidden;}
 }
 body.modal-open #season-bg *,
 body.modal-open .ticker-track{ animation-play-state:paused !important; }
+
+/* ═════════ 🍫 빼빼로 데이 이벤트 "빼빼로 상자를 채워라!" (v3.9.0) ═════════
+   전용 .pp-* 클래스만 사용(정적 tw.css 에 없는 유틸 의존 없음) — 이벤트가 끝나 이 블록을 지워도 다른 화면 영향 없음 */
+/* ── 1) 대시보드 배너 ── */
+.pp-banner{position:relative;padding:13px 14px 12px;border-radius:18px;margin-bottom:12px;
+  background:linear-gradient(135deg,#FFF6EC 0%,#FBE4D2 55%,#F6D2BD 100%);
+  border:1.5px solid rgba(177,96,62,.32);box-shadow:0 4px 14px rgba(177,96,62,.14);overflow:hidden;}
+/* 대시보드를 열 때 배너 위를 두 번 스치는 은은한 광택 — 끝나면 멈춤.
+   ⚡ 무한 반복이면 대기 중에도 CPU 를 계속 써서(측정: 저사양 기준 +30%) 2회로 제한 */
+.pp-banner::before{content:"";position:absolute;top:-60%;left:-40%;width:30%;height:220%;pointer-events:none;
+  background:linear-gradient(100deg,transparent 0%,rgba(255,255,255,.55) 50%,transparent 100%);
+  transform:rotate(14deg) translateX(0);animation:pp-shine 2.6s ease-in-out .8s 2 forwards;}
+@keyframes pp-shine{0%,45%{transform:rotate(14deg) translateX(0)}100%{transform:rotate(14deg) translateX(520%)}}
+.pp-head{position:relative;display:flex;align-items:center;gap:8px;}
+.pp-ico{font-size:22px;line-height:1;flex-shrink:0;animation:bounceY 1.1s ease-in-out .4s 3;}   /* 세 번 통통 튀고 멈춤 */
+.pp-btitle{flex:1;min-width:0;font-size:13.5px;font-weight:800;color:#3B2A20;letter-spacing:-.025em;line-height:1.35;}
+.pp-chip{flex-shrink:0;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:999px;color:#fff;white-space:nowrap;
+  background:linear-gradient(135deg,#8F3E25,#B05A34);box-shadow:0 2px 6px rgba(143,62,37,.3);}   /* 흰 글씨 대비 4.5:1 이상 */
+.pp-chip.before{background:linear-gradient(135deg,#5A443A,#8B6B5C);}
+.pp-row{position:relative;display:flex;align-items:center;gap:10px;margin-top:10px;}
+.pp-count-sm{flex-shrink:0;font-size:17px;font-weight:900;color:#5A2E1C;letter-spacing:-.02em;white-space:nowrap;}
+.pp-count-sm small{font-size:11px;font-weight:800;color:#96552F;margin-left:1px;}
+.pp-line{position:relative;font-size:11.5px;font-weight:700;color:#5C4033;margin-top:8px;line-height:1.5;letter-spacing:-.02em;}
+.pp-rule{position:relative;font-size:10.5px;font-weight:500;color:#7C5A46;margin-top:2px;line-height:1.5;}
+
+/* ── 2) 빼빼로 상자 — 막대 칸 (채운 칸: 초코 + 비스킷 손잡이 / 빈 칸: 점선) ── */
+.pp-box{flex:1;min-width:0;display:flex;align-items:flex-end;justify-content:space-between;gap:3px;padding:6px 8px 5px;
+  border-radius:10px;background:rgba(255,255,255,.7);border:1px solid rgba(177,96,62,.22);}
+.pp-stick{position:relative;display:block;flex:0 0 auto;width:8px;height:32px;border-radius:5px;
+  border:1.5px dashed rgba(150,85,47,.32);background:transparent;box-sizing:border-box;}
+.pp-stick.on{border:0;background:linear-gradient(180deg,#6E3B27 0%,#4A2618 64%,#EBC892 64%,#D6A562 100%);
+  box-shadow:0 1px 2px rgba(74,38,24,.28);}
+.pp-stick.on::after{content:"";position:absolute;top:4px;left:2px;width:2px;height:11px;border-radius:2px;background:rgba(255,255,255,.32);}   /* 초코 광택 */
+.pp-box.lg{flex:none;justify-content:center;gap:7px;padding:12px 14px 10px;border-radius:16px;}
+.pp-box.lg .pp-stick{width:12px;height:62px;border-radius:7px;}
+.pp-box.lg .pp-stick.on::after{top:7px;left:3px;width:3px;height:20px;}
+.pp-stick.pop{animation:pp-drop .75s cubic-bezier(.34,1.56,.64,1) .3s both;}
+@keyframes pp-drop{0%{transform:translateY(-52px) rotate(-14deg);opacity:0}55%{opacity:1}100%{transform:translateY(0) rotate(0);opacity:1}}
+
+/* ── 3) 쪽지·일기 작성 창 아래 20자 안내 ── */
+.pp-hint{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:3px 9px;border-radius:999px;
+  font-size:11px;font-weight:700;letter-spacing:-.02em;line-height:1.4;animation:msgIn .3s ease-out;}
+.pp-hint.need{color:#96552F;background:rgba(210,139,98,.16);}
+.pp-hint.ok{color:#2F6B3A;background:rgba(72,160,96,.14);}
+.pp-hint.rest{color:#64748B;background:rgba(148,163,184,.16);}
+
+/* ── 4) 막대 팝업 ── */
+.pp-overlay{position:fixed;inset:0;z-index:96;display:flex;align-items:center;justify-content:center;padding:16px;}
+.pp-overlay.pp-out{animation:pp-fadeOut .3s cubic-bezier(0.22,0.61,0.36,1) forwards;}
+@keyframes pp-fadeOut{to{opacity:0}}
+.pp-card{position:relative;width:100%;max-width:340px;border-radius:28px;padding:28px 22px 22px;text-align:center;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FFF9F3 100%);}   /* 불투명 — 폰에선 .glass 블러가 꺼져 뒤 대시보드가 비쳐 보이므로 */
+.pp-card.pp-card-out{animation:pp-cardOut .3s cubic-bezier(0.22,0.61,0.36,1) forwards;}
+@keyframes pp-cardOut{to{opacity:0;transform:scale(.94) translateY(10px)}}
+.pp-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#94A3B8;background:transparent;border:0;cursor:pointer;}
+.pp-close:hover{background:rgba(15,23,42,.06);}
+.pp-kicker{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.02em;color:#96552F;
+  background:rgba(210,139,98,.16);padding:3px 10px;border-radius:999px;margin-bottom:8px;}
+.pp-title{font-size:21px;font-weight:900;color:#3B2A20;letter-spacing:-.03em;line-height:1.3;}
+.pp-from{font-size:12px;font-weight:600;color:#7C5A46;margin-top:4px;}
+.pp-stage{display:flex;justify-content:center;margin:16px 0 10px;}
+.pp-count{font-size:15px;font-weight:800;color:#96552F;}
+.pp-count b{font-size:30px;font-weight:900;color:#5A2E1C;margin-right:2px;}
+.pp-msg{font-size:13px;font-weight:800;color:#5C4033;margin-top:6px;line-height:1.5;letter-spacing:-.02em;}
+.pp-sub{font-size:11.5px;font-weight:600;color:#7C5A46;margin-top:3px;}
+.pp-ok{width:100%;padding:14px 0;margin-top:14px;border-radius:16px;font-size:14px;}
+@media (prefers-reduced-motion:reduce){
+  .pp-banner::before,.pp-ico,.pp-stick.pop,.pp-hint{animation:none !important;}
+}
+/* 창이 열려 있는 동안엔 배너 광택·아이콘 움직임도 멈춤(계절 배경·티커와 같은 원칙) — 닫으면 그 자리에서 이어짐 */
+body.modal-open .pp-banner::before,body.modal-open .pp-ico{animation-play-state:paused !important;}

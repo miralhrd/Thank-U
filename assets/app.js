@@ -18,7 +18,8 @@ var GUD = {
   todayCount: 0, todayMine: 0, reachers: [],
   data: null,                 // {inbox, sent, diary, latestTs, lastReadTs} — uid 기반 원본
   rosterArr: [], fullByUid: {}, uidByFull: {}, rosterReady: false,
-  adminContact: null            // 로그인 화면 "비번 문의처" (시설별)
+  adminContact: null,           // 로그인 화면 "비번 문의처" (시설별)
+  pepero: null                  // 🍫 빼빼로 이벤트 진행 정보·내 막대 수 (loginAndLoad·getUpdates·전송 응답에서 갱신, 표시용)
 };
 function kstDayLocal(ms) {
   return new Date(Number(ms) + 9 * 3600000).toISOString().slice(0, 10);
@@ -29,6 +30,83 @@ function hideSplash() {
     el.classList.add("bs-hide");
     setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 480);
   }
+}
+
+/* ================= 🍫 빼빼로 데이 이벤트 "빼빼로 상자를 채워라!" (표시 전용) =================
+ *   · 막대 판정(20자 · 하루 3개 · 11개 완성 · 기간)은 전부 백엔드 17_Pepero.gs 가 하고, 화면은 응답의 pepero 만 믿습니다.
+ *   · 서버가 pepero 를 보내지 않으면(17 미배포 · ENABLED=false · 대상 시설 아님) 배너·안내·팝업이 전혀 보이지 않습니다.
+ *   · 기간 판단은 서버 시각(serverNowMs)으로 기기 시계 오차를 보정해서 합니다.
+ *   · 글자(문구)는 config.js 의 GU.PEPERO 에서 바꿀 수 있습니다.
+ */
+var PEPERO_TXT = (function () {
+  var c = (window.GU && window.GU.PEPERO) || {};
+  return {
+    title: c.title || "빼빼로 상자를 채워라!",
+    periodText: c.periodText || "11/3(화) ~ 11/10(화)",
+    startText: c.startText || "11/3(화)",
+    giftText: c.giftText || "11/11 빼빼로 데이에 빼빼로를 보내 드려요",
+    ruleText: c.ruleText || "쪽지·감사일기 20자 이상 = 빼빼로 막대 1개 · 하루 3개까지"
+  };
+})();
+// ⚡ 화면에 보이는 값(단계·내 개수·기간)이 바뀔 때만 대시보드를 다시 그림 — 무변경 폴링(3분)마다 다시 그리지 않게(3.7.0 원칙 유지)
+var _ppSig = "";
+function peperoSig(pp) {
+  if (!pp) return "";
+  var m = peperoMine(pp);
+  return [peperoPhase(pp), pp.startMs, pp.endMs, pp.showAfterMs, pp.goal, pp.dailyMax, pp.minChars,
+    m.known ? 1 : 0, m.total, m.today, peperoNowMs(pp) <= (pp.showAfterMs || 0) ? 1 : 0].join("|");
+}
+function peperoNotify() {
+  try {
+    var sig = peperoSig(GUD.pepero);
+    if (sig === _ppSig) return;
+    _ppSig = sig;
+    window.dispatchEvent(new Event("gu-pepero"));
+    // 🍫 v3.9.1 — 바뀐 값을 기기 스냅샷에도 저장(값이 바뀔 때만 · 세션이 자리 잡은 뒤에만) → 다음 빠른 부팅 때 배너가 바로 보임
+    if (GUD.uid && GU.session && Number(GU.session.uid) === GUD.uid) saveSnap();
+  } catch (e) {}
+}
+// 서버 정보 반영. mode "replace"(로그인·폴링): 정보가 없으면 지움(=숨김) · "merge"(쪽지·일기 응답): 없으면 그대로 둠
+function setPepero(info, mode) {
+  try {
+    var old = GUD.pepero;
+    if (!info || typeof info !== "object" || info.on !== true) {
+      if (mode === "replace" && old) { GUD.pepero = null; peperoNotify(); }
+      return;
+    }
+    var n = {
+      on: true, startMs: Number(info.startMs) || 0, endMs: Number(info.endMs) || 0,
+      serverNowMs: Number(info.serverNowMs) || Date.now(), receivedAtMs: Date.now(),
+      goal: Number(info.goal) || 11, dailyMax: Number(info.dailyMax) || 3, minChars: Number(info.minChars) || 20,
+      showAfterMs: Number(info.showAfterMs) || 0, uid: GUD.uid, mine: null
+    };
+    var m = (info.mine && typeof info.mine === "object") ? { total: Number(info.mine.total) || 0, today: Number(info.mine.today) || 0, day: String(info.mine.day || "") } : null;
+    var om = (old && old.uid === GUD.uid && old.startMs === n.startMs) ? old.mine : null;
+    if (m && om) {
+      // 같은 사람·같은 이벤트면 늘어나기만 하는 값 — 늦게 도착한 응답이 숫자를 되돌리지 않게
+      var day = m.day > om.day ? m.day : om.day;
+      var today = m.day === om.day ? Math.max(m.today, om.today) : (m.day > om.day ? m.today : om.today);
+      n.mine = { total: Math.max(m.total, om.total), today: today, day: day };
+    } else {
+      n.mine = m || om;   // 서버가 '모름'(null)이면 이 기기 값 유지
+    }
+    GUD.pepero = n;
+    peperoNotify();
+  } catch (e) {}
+}
+function peperoNowMs(pp) { return Date.now() + (((pp && pp.serverNowMs) || 0) - ((pp && pp.receivedAtMs) || 0)); }
+// "before" | "active" | "after" | "" (서버 정보 없음 → 아무것도 안 보임)
+function peperoPhase(pp) {
+  if (!pp || pp.on !== true || !pp.startMs || !pp.endMs) return "";
+  var now = peperoNowMs(pp);
+  return now < pp.startMs ? "before" : (now <= pp.endMs ? "active" : "after");
+}
+// 내 막대 수 — 날짜(KST)가 바뀌었으면 오늘 개수는 0
+function peperoMine(pp) {
+  var m = pp && pp.mine;
+  if (!m) return { total: 0, today: 0, known: false };
+  var goal = (pp && pp.goal) || 11;
+  return { total: Math.min(m.total || 0, goal), today: m.day === kstDayLocal(peperoNowMs(pp)) ? (m.today || 0) : 0, known: true };
 }
 
 /* ================= 명단 매핑 (uid ↔ 시즌2 스타일 "부서-이름-직급") =================
@@ -239,6 +317,7 @@ function saveSnap() {
       rewards: GUD.rewards, notices: GUD.notices,
       todayCount: GUD.todayCount, todayMine: GUD.todayMine, day: kstDayLocal(Date.now()),
       reachers: GUD.reachers || [],
+      pepero: GUD.pepero || null,   // 🍫 v3.9.1 — 빠른 부팅 때 배너가 서버 확인 전에도 바로 보이게(표시용 · 서버 응답이 오면 setPepero 가 덮어씀)
       me: { fac: s.fac, dept: s.dept, name: s.name, rank: s.rank }
     });
   } catch (e) {}
@@ -277,6 +356,7 @@ async function syncRefreshImpl() {
   var r = await GU.authApi("getUpdates", { sinceTs: d.latestTs });
   if (genStale(tag)) return { ok: false };
   if (!(r && r.ok)) return { ok: false };
+  setPepero(r.pepero, "replace");   // 🍫 무변경 응답에도 실려 옴 — 시작·종료 시각에 맞춰 배너가 바뀜
   if (r.resync) { GUD.data = null; return syncRefreshImpl(); }
   var changed = false;
   if (typeof r.lastReadTs === "number" && r.lastReadTs > d.lastReadTs) { d.lastReadTs = r.lastReadTs; changed = true; }
@@ -319,6 +399,7 @@ async function populateFromLogin(uid, password, r) {
   GUD.todayMine = (r.todayCounts && r.todayCounts.mine) || 0;
   if (r.todayCounts && r.todayCounts.total > GUD.todayCount) GUD.todayCount = r.todayCounts.total;
   GUD.reachers = r.reachers || [];
+  setPepero(r.pepero, "replace");   // 🍫 로그인 응답에 이벤트 정보가 없으면 배너를 숨김
   GU.session = Object.assign({ uid: uid, pw: password, adminRole: GUD.adminRole }, r.me || {});
   await loadRosterFull(r.rosterVersion, r.rosterFull);
   var d = GU.dataCache.load(uid);
@@ -411,6 +492,10 @@ function fastBootShape() {
     GUD.todayCount = sameDay ? (snap.todayCount || 0) : 0;
     GUD.todayMine = sameDay ? (snap.todayMine || 0) : 0;
     GUD.reachers = Array.isArray(snap.reachers) ? snap.reachers : [];
+    // 🍫 v3.9.1 — 이벤트 정보도 되살림(같은 사람·on 일 때만) → 배너가 서버 확인 전에 바로 보임. 확인 응답이 오면 setPepero 가 최신값으로 덮어쓰거나 숨김
+    var sp = snap.pepero;
+    if (sp && typeof sp === "object" && sp.on === true && Number(sp.uid) === uid && sp.startMs && sp.endMs) { GUD.pepero = sp; _ppSig = peperoSig(sp); }
+    else { GUD.pepero = null; _ppSig = ""; }
     GU.session = Object.assign({ uid: uid, pw: saved.pw, adminRole: GUD.adminRole }, snap.me || {});
     GUD.fullByUid = {}; GUD.uidByFull = {};
     ro.staff.forEach(function (s) { registerPerson(s.id, s.fac, s.dept, s.name, s.rank); });
@@ -481,6 +566,7 @@ async function apiCall(p) {
       if (sr && sr.ok && !genStale(tagS)) {   // 🆕 v3.8.7 — 응답이 왔을 때 세션이 바뀌었으면 화면·저장소에 반영하지 않음
         GUD._localWriteAt = Date.now();          // 🆕 부팅 확인 응답이 이보다 먼저 출발했으면 내 온도를 되돌리지 않게
         if (typeof sr.myTemp === "number") GUD.temp = sr.myTemp;
+        if (sr.pepero) setPepero(sr.pepero, "merge");   // 🍫 막대 판정 결과(내 개수) 반영
         GUD.todayCount++;
         GUD.todayMine++;   // 내가 보낸 쪽지는 우리 시설 집계에 포함
         if (GUD.data) {
@@ -497,6 +583,7 @@ async function apiCall(p) {
       if (gr && gr.ok && !genStale(tagG)) {   // 🆕 v3.8.7 — 세션이 바뀐 뒤의 늦은 응답은 반영하지 않음
         GUD._localWriteAt = Date.now();
         if (typeof gr.newTemp === "number") GUD.temp = gr.newTemp;
+        if (gr.pepero) setPepero(gr.pepero, "merge");   // 🍫 막대 판정 결과(내 개수) 반영
         if (GUD.data && gr.entry) {
           GUD.data.diary = GU.mergeDiary(GUD.data.diary, [gr.entry]);
           GU.dataCache.save(GUD.uid, GUD.data);
@@ -2112,14 +2199,33 @@ function Dashboard({
   const mountedRef = useRef(true);
   const shakeTimerRef = useRef(null);
   const sentTimerRef = useRef(null);
+  const ppTimerRef = useRef(null);   // 🍫 빼빼로 팝업 지연 타이머
   useEffect(() => {
     mountedRef.current = true;
     return () => {
       mountedRef.current = false;
       if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
       if (sentTimerRef.current) clearTimeout(sentTimerRef.current);
+      if (ppTimerRef.current) clearTimeout(ppTimerRef.current);
     };
   }, []);
+  // 🍫 빼빼로 이벤트 — 서버 정보(GUD.pepero)가 바뀌면 배너를 다시 그림 · 막대를 받으면 팝업
+  const [, setPpTick] = useState(0);
+  const [ppPop, setPpPop] = useState(null);   // 막대 팝업에 보여 줄 판정 결과 — null 이면 안 보임
+  useEffect(() => {
+    const onPp = () => setPpTick(t => t + 1);
+    window.addEventListener("gu-pepero", onPp);
+    return () => window.removeEventListener("gu-pepero", onPp);
+  }, []);
+  const showPeperoPop = (pp, delay) => {
+    try {
+      if (!(pp && typeof pp === "object" && pp.got === true)) return;   // 막대를 실제로 받았을 때만
+      if (ppTimerRef.current) clearTimeout(ppTimerRef.current);
+      ppTimerRef.current = setTimeout(() => {
+        if (mountedRef.current) setPpPop(Object.assign({}, pp, { key: Date.now() }));
+      }, delay);
+    } catch (e) {}
+  };
 
   // ⭐ 직원 명단 prefetch 보장 — 로그인 응답으로 이미 확보했으면 생략 (요청 1회 절감)
   useEffect(() => {
@@ -2337,6 +2443,7 @@ function Dashboard({
         silent: true
       });
     }, 320);
+    showPeperoPop(payload && payload.pepero, 360);   // 🍫 작성 창이 사라진 뒤 부드럽게 등장
   };
 
   // 🆕 쪽지함에서 답장하기: 받은 쪽지를 들고 쪽지쓰기 창을 연다
@@ -2350,6 +2457,7 @@ function Dashboard({
   const onGratitudeSaved = payload => {
     if (payload && typeof payload.newTemp === "number") setTemp(payload.newTemp);
     if (payload && payload.entry) setDiary(prev => GU.mergeDiary(prev, [payload.entry]));
+    showPeperoPop(payload && payload.pepero, 700);   // 🍫 일기 창 위로 — '감사가 기록됐어요' 문구를 먼저 보여 준 뒤
   };
   // 🆕 v3.8.6 — 쪽지함을 열 때 최신 쪽지를 '먼저' 받아온다.
   //    이전에는 읽음 처리만 보내고 목록은 마지막 폴링 결과(최대 3.6분 전) 그대로였다.
@@ -2514,7 +2622,9 @@ function Dashboard({
       content: "[" + (GUD.fac || "우리 시설") + "] " + facNotice.content
     },
     onClose: () => setFacNoticeClosed(true)
-  }), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement(SafeBoundary, null, /*#__PURE__*/React.createElement(PeperoBanner, {   // 🍫 빼빼로 상자 진행 배너
+    pp: GUD.pepero
+  })), /*#__PURE__*/React.createElement("div", {
     className: "card p-4 mb-3 slideUp flex items-center gap-3",
     style: {
       animationDelay: "0.06s"
@@ -2814,6 +2924,12 @@ function Dashboard({
     initialEntries: diary,
     onClose: () => setDiaryOpen(false),
     onSaved: onGratitudeSaved
+  })), ppPop && /*#__PURE__*/React.createElement(SafeBoundary, {   // 🍫 빼빼로 막대 팝업 — 오류가 나도 이 팝업만 닫힘
+    onError: () => setPpPop(null)
+  }, /*#__PURE__*/React.createElement(PeperoModal, {
+    key: ppPop.key,
+    data: ppPop,
+    onClose: () => setPpPop(null)
   })));
 }
 
@@ -2995,7 +3111,8 @@ function ComposeModal({
     const donePayload = {
       newTemp: r.myTemp,
       rose: r.rose,
-      reason: r.reason
+      reason: r.reason,
+      pepero: (r.pepero && typeof r.pepero === "object") ? r.pepero : null   // 🍫 막대 판정 결과 — 작성 창이 닫힌 뒤 대시보드가 팝업
     };
     finishRef.current = () => {
       if (doneRef.current) return;
@@ -3191,7 +3308,10 @@ function ComposeModal({
     rows: 3
   }), /*#__PURE__*/React.createElement("div", {
     className: "text-right text-[11px] text-slate-300 mt-1 tabular font-semibold"
-  }, msg.length, "/300")), !replyTo && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+  }, msg.length, "/300"), /*#__PURE__*/React.createElement(SafeBoundary, null, /*#__PURE__*/React.createElement(PeperoHint, {   // 🍫 20자 안내
+    kind: "note",
+    len: msg.trim().length
+  }))), !replyTo && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] font-extrabold text-slate-600 mb-2 tracking-widest uppercase"
   }, "감사 템플릿 ", /*#__PURE__*/React.createElement("span", {
     className: "normal-case tracking-normal font-semibold text-slate-400"
@@ -3274,6 +3394,230 @@ function ComposeModal({
       if (finishRef.current) finishRef.current();
     }
   }));
+}
+
+/* ================= 🍫 빼빼로 이벤트 화면 조각 ================= */
+// 빼빼로 상자 — 막대 goal 칸 (채운 칸은 초코 빼빼로, 빈 칸은 점선). popIdx 칸은 위에서 쏙 들어오는 연출
+function PeperoSticks({
+  total,
+  goal,
+  size,
+  popIdx
+}) {
+  const h = React.createElement;
+  const n = Math.max(1, goal || 11);
+  const items = [];
+  for (let i = 0; i < n; i++) {
+    const on = i < total;
+    items.push(h("span", {
+      key: i,
+      className: `pp-stick${on ? " on" : ""}${on && i === popIdx ? " pop" : ""}`,
+      "aria-hidden": "true"
+    }));
+  }
+  return h("div", {
+    className: `pp-box${size === "lg" ? " lg" : ""}`,
+    role: "img",
+    "aria-label": `빼빼로 막대 ${total}개 / ${n}개`
+  }, items);
+}
+
+// 대시보드 배너 — 시작 전(D-day) · 진행 중(내 상자) · 종료 뒤(완성자만 이틀간 안내)
+function PeperoBanner({
+  pp
+}) {
+  const h = React.createElement;
+  const phase = peperoPhase(pp);
+  if (!phase) return null;
+  const goal = pp.goal || 11,
+    dmax = pp.dailyMax || 3;
+  const mine = peperoMine(pp);
+  const done = mine.known && mine.total >= goal;
+  if (phase === "after" && !(done && peperoNowMs(pp) <= (pp.showAfterMs || 0))) return null;
+  let chip, chipCls = "",
+    body;
+  if (phase === "before") {
+    const dd = Math.round((Date.parse(kstDayLocal(pp.startMs)) - Date.parse(kstDayLocal(peperoNowMs(pp)))) / 86400000);
+    chip = dd <= 1 ? "내일 시작!" : `D-${dd}`;
+    chipCls = "before";
+    body = h(React.Fragment, null, h("div", {
+      className: "pp-line"
+    }, PEPERO_TXT.startText, "부터 감사 쪽지·감사일기를 쓰면 빼빼로 막대가 쌓여요"), h("div", {
+      className: "pp-rule"
+    }, "막대 ", goal, "개를 모으면 ", PEPERO_TXT.giftText, " 🎁"));
+  } else if (done) {
+    chip = phase === "after" ? "완성" : "완성!";
+    body = h(React.Fragment, null, h("div", {
+      className: "pp-row"
+    }, h(PeperoSticks, {
+      total: goal,
+      goal: goal
+    }), h("div", {
+      className: "pp-count-sm tabular"
+    }, goal, h("small", null, "/", goal))), h("div", {
+      className: "pp-line"
+    }, "🎉 빼빼로 상자 완성! ", PEPERO_TXT.giftText));
+  } else {
+    chip = PEPERO_TXT.periodText;
+    const left = goal - mine.total;
+    body = h(React.Fragment, null, mine.known && h("div", {
+      className: "pp-row"
+    }, h(PeperoSticks, {
+      total: mine.total,
+      goal: goal
+    }), h("div", {
+      className: "pp-count-sm tabular"
+    }, mine.total, h("small", null, "/", goal))), h("div", {
+      className: "pp-line"
+    }, !mine.known ? PEPERO_TXT.ruleText : mine.today >= dmax ? `오늘 막대 ${dmax}개를 다 모았어요 · 내일 또 만나요! (${left}개 남음)` : `오늘 ${mine.today}/${dmax}개 · ${left}개 더 모으면 빼빼로 박스를 드려요`), mine.known && h("div", {
+      className: "pp-rule"
+    }, PEPERO_TXT.ruleText));
+  }
+  return h("div", {
+    className: "pp-banner slideUp",
+    role: "status",
+    style: {
+      animationDelay: "0.05s"
+    }
+  }, h("div", {
+    className: "pp-head"
+  }, h("span", {
+    className: "pp-ico",
+    "aria-hidden": "true"
+  }, "🍫"), h("span", {
+    className: "pp-btitle track-tight"
+  }, PEPERO_TXT.title), h("span", {
+    className: `pp-chip ${chipCls}`
+  }, chip)), body);
+}
+
+// 쪽지·일기 작성 창 아래 안내 — 진행 중일 때만. kind: "note"(직접 쓴 글) | "diary"
+function PeperoHint({
+  kind,
+  len
+}) {
+  const h = React.createElement;
+  const pp = GUD.pepero;
+  if (peperoPhase(pp) !== "active") return null;
+  const mine = peperoMine(pp),
+    goal = pp.goal || 11,
+    dmax = pp.dailyMax || 3,
+    min = pp.minChars || 20;
+  let cls = "need",
+    text;
+  if (mine.known && mine.total >= goal) {
+    cls = "ok";
+    text = "🎉 빼빼로 상자 완성! 11/11에 빼빼로를 보내 드려요";
+  } else if (mine.known && mine.today >= dmax) {
+    cls = "rest";
+    text = `🍫 오늘 막대 ${dmax}개를 다 모았어요 · 내일 또 만나요`;
+  } else if (len < min) {
+    text = `🍫 ${kind === "diary" ? "일기가" : "직접 쓴 글이"} ${min}자 이상이면 빼빼로 막대 +1 (지금 ${len}자)`;
+  } else {
+    cls = "ok";
+    text = `✅ ${kind === "diary" ? "저장하면" : "보내면"} 빼빼로 막대 +1${mine.known ? ` → 오늘 ${mine.today + 1}/${dmax}` : ""}`;
+  }
+  return h("div", {
+    className: `pp-hint ${cls}`,
+    "aria-live": "polite"
+  }, text);
+}
+
+// 막대를 받았을 때 팝업 — data: 서버 판정 결과(pepero: got·completed·mine·kind·goal)
+function PeperoModal({
+  data,
+  onClose
+}) {
+  const h = React.createElement;
+  const [closing, setClosing] = useState(false);
+  const closingRef = useRef(false);
+  const okRef = useRef(null);
+  const goal = data.goal || 11,
+    dmax = data.dailyMax || 3;
+  const total = Math.max(0, Math.min(goal, (data.mine && data.mine.total) || 0)),
+    today = (data.mine && data.mine.today) || 0;
+  const completed = data.completed === true || total >= goal;
+  const close = () => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setClosing(true);
+    setTimeout(() => {
+      try {
+        onClose();
+      } catch (e) {}
+    }, 300); // 닫힘 애니메이션(.pp-out / .pp-card-out .3s) 뒤 언마운트
+  };
+  useEffect(() => {
+    var _unlockBody = lockBodyScroll();
+    try {
+      okRef.current && okRef.current.focus({
+        preventScroll: true
+      });
+    } catch (e) {}
+    if (completed) {
+      try {
+        fireConfetti();
+      } catch (e) {}
+    }
+    const onKey = e => {
+      if (e.key === "Escape") close();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      _unlockBody();
+      window.removeEventListener("keydown", onKey);
+    };
+    // eslint-disable-next-line
+  }, []);
+  return h("div", {
+    className: `pp-overlay glass-overlay ${closing ? "pp-out" : "fadeIn"}`,
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-label": completed ? "빼빼로 상자 완성" : "빼빼로 막대 받기",
+    onClick: e => {
+      if (e.target === e.currentTarget) close();
+    }
+  }, h("div", {
+    className: `glass pp-card ${closing ? "pp-card-out" : "scaleIn"}`
+  }, h("button", {
+    type: "button",
+    className: "pp-close btn",
+    onClick: close,
+    "aria-label": "닫기"
+  }, h("svg", {
+    width: "15",
+    height: "15",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2.5",
+    viewBox: "0 0 24 24"
+  }, h("path", {
+    d: "M18 6 6 18M6 6l12 12"
+  }))), h("div", {
+    className: "pp-kicker"
+  }, "🍫 ", PEPERO_TXT.title), h("h2", {
+    className: "pp-title track-tight"
+  }, completed ? "빼빼로 상자 완성! 🎉" : "빼빼로 막대 +1!"), h("p", {
+    className: "pp-from"
+  }, data.kind === "diary" ? "감사일기를 남겨 막대를 받았어요" : "감사 쪽지를 보내 막대를 받았어요"), h("div", {
+    className: "pp-stage"
+  }, h(PeperoSticks, {
+    total: total,
+    goal: goal,
+    size: "lg",
+    popIdx: total - 1
+  })), h("div", {
+    className: "pp-count tabular"
+  }, h("b", null, total), " / ", goal), h("p", {
+    className: "pp-msg"
+  }, completed ? PEPERO_TXT.giftText + " 🎁" : `${goal - total}개 더 모으면 빼빼로 박스를 드려요!`), !completed && h("p", {
+    className: "pp-sub"
+  }, today >= dmax ? `오늘 ${dmax}개를 다 모았어요 · 내일 또 만나요!` : `오늘 ${today}/${dmax}개 · 하루 ${dmax}개까지 받을 수 있어요`), h("button", {
+    ref: okRef,
+    type: "button",
+    className: "pp-ok btn btn-g track-tight popIn",
+    onClick: close
+  }, completed ? "야호!" : "좋아요")));
 }
 
 // ⭐ SuccessModal 새 마일스톤 문구 적용
@@ -3809,7 +4153,8 @@ function DiaryModal({
     if (typeof onSaved === "function") onSaved({
       newTemp,
       rose,
-      entry
+      entry,
+      pepero: (r.pepero && typeof r.pepero === "object") ? r.pepero : null   // 🍫 막대 판정 결과 — 대시보드가 팝업
     });
     setTimeout(() => setJustSaved(null), 3000);
   };
@@ -3982,7 +4327,10 @@ function DiaryModal({
     rows: 5
   }), /*#__PURE__*/React.createElement("div", {
     className: "text-right text-[11px] text-slate-300 tabular font-semibold"
-  }, text.length, "/500"), /*#__PURE__*/React.createElement("button", {
+  }, text.length, "/500"), /*#__PURE__*/React.createElement(SafeBoundary, null, /*#__PURE__*/React.createElement(PeperoHint, {   // 🍫 20자 안내
+    kind: "diary",
+    len: text.trim().length
+  })), /*#__PURE__*/React.createElement("button", {
     onClick: save,
     disabled: saving || !text.trim(),
     className: "w-full py-4 rounded-2xl btn btn-g text-sm disabled:opacity-50 flex items-center justify-center gap-2 track-tight"
