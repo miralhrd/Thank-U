@@ -34,7 +34,7 @@ window.GU.PUSH_PUBLIC_KEY = 'BB8wHP51718NWqQojbMKkfeoPdLW0IPFwTam_lAHbk2XtVSMRdl
 // 🍫 빼빼로 데이 이벤트 "빼빼로 상자를 채워라!" — 화면에 보이는 글자만 (기간·20자·하루 3개·11개 판정은 백엔드 17_Pepero.gs)
 //    기간을 바꾸면 백엔드 PEPERO.START/END 와 함께 아래 periodText·startText 글자도 맞춰 주세요.
 window.GU.PEPERO = {
-  title: "빼빼로 상자를 채워라!",
+  title: "감사로 채우는 11개의 마음!",
   periodText: "11/3(화) ~ 11/10(화)",
   startText: "11/3(화)",
   giftText: "11/11 빼빼로 데이에 빼빼로를 보내 드려요",
